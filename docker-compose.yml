@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kodeksa_frontend
+    ports:
+      - "4000:4000"
+    restart: always
+    networks:
+      - backnet
+    environment:
+      - PUBLIC_API_URL=https://api.kodeksa.lat
+
+networks:
+  backnet:
+    external: true

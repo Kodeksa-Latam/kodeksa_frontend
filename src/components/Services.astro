@@ -104,6 +104,7 @@ const fallbackServices: Solution[] = [
 
 // Obtener la URL base de la API desde las variables de entorno
 const apiBaseUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+console.log('🔍 Llamando a', import.meta.env.PUBLIC_API_URL);
 // Función para obtener las soluciones
 let services: Solution[] = fallbackServices;
 let error: string | null = null;
