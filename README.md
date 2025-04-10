@@ -2,7 +2,7 @@
 
 Sitio web corporativo de Kodeksa, desarrollado con Astro y Tailwind CSS.
 
-![Kodeksa Website](https://res.cloudinary.com/dcm9ovoys/image/upload/v1744232387/kodeksa/bjl0f2bmlgot9txqu20x.png)
+![Kodeksa Website](https://res.cloudinary.com/dcm9ovoys/image/upload/v1744302346/kodeksa/lrgnwozt51ixou3aqp5j.png)
 
 ## 🚀 Tecnologías
 
