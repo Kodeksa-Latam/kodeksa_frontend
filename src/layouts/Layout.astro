@@ -1,0 +1,45 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title = "Kodeksa - Potenciamos tus ideas con código sólido",
+  description = "Kodeksa es una empresa de desarrollo de software que transforma ideas en soluciones digitales innovadoras."
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="min-h-screen bg-kodeksa-light">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: light;
+  }
+  html {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    scroll-behavior: smooth;
+    background: #F5F5F5;
+  }
+  body {
+    margin: 0;
+  }
+  ::selection {
+    background: rgba(26, 77, 46, 0.1);
+  }
+</style>

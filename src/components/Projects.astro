@@ -1,0 +1,359 @@
+---
+// Only import the CSS in the frontmatter
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+const projects = [
+  {
+    id: 1,
+    title: 'E-commerce Platform',
+    description: 'Plataforma de comercio electrónico con más de 100k usuarios activos',
+    shortDescription: 'E-commerce enterprise con más de 100k usuarios activos',
+    type: 'Web',
+    images: [
+      '/images/projects/ecommerce-1.jpg',
+      '/images/projects/ecommerce-2.jpg',
+      '/images/projects/ecommerce-3.jpg'
+    ],
+    tags: ['Frontend', 'Backend', 'UI/UX'],
+    stack: {
+      frontend: ['React', 'TypeScript', 'Redux'],
+      backend: ['Node.js', 'Express', 'PostgreSQL'],
+      devops: ['AWS', 'Docker', 'CI/CD']
+    },
+    testimonials: [
+      {
+        text: "La plataforma superó nuestras expectativas en términos de rendimiento y escalabilidad.",
+        author: "María González",
+        role: "CTO, RetailCorp"
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: 'Fintech Mobile App',
+    description: 'Aplicación móvil para gestión financiera personal con funcionalidades avanzadas de inversión y ahorro',
+    shortDescription: 'App de gestión financiera personal',
+    type: 'Mobile',
+    images: [
+      '/images/projects/fintech-1.jpg',
+      '/images/projects/fintech-2.jpg',
+      '/images/projects/fintech-3.jpg',
+      '/images/projects/fintech-4.jpg'
+    ],
+    tags: ['Frontend', 'Backend', 'UI/UX'],
+    stack: {
+      frontend: ['React Native', 'TypeScript'],
+      backend: ['Node.js', 'MongoDB'],
+      devops: ['Firebase', 'App Center']
+    },
+    testimonials: [
+      {
+        text: "La app revolucionó la manera en que nuestros usuarios manejan sus finanzas.",
+        author: "Carlos Pérez",
+        role: "Product Manager, FinanceApp"
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: 'API Gateway System',
+    description: 'Sistema de gateway API altamente escalable procesando millones de requests diarios',
+    shortDescription: 'Gateway API de alto rendimiento',
+    type: 'Backend',
+    images: ['/images/projects/backend-1.jpg'],
+    tags: ['Backend', 'DevOps'],
+    stack: {
+      backend: ['Node.js', 'GraphQL', 'Redis'],
+      devops: ['Kubernetes', 'Terraform', 'AWS']
+    },
+    testimonials: [
+      {
+        text: "El sistema maneja picos de tráfico sin degradar el rendimiento.",
+        author: "Ana Martínez",
+        role: "Lead Engineer, TechCorp"
+      }
+    ]
+  }
+];
+
+const categories = ['Todos', 'Web', 'Mobile', 'Backend'];
+---
+
+<section id="proyectos" class="py-32">
+  <div class="container mx-auto px-6">
+    <div class="max-w-2xl mx-auto text-center mb-16">
+      <h2 class="text-4xl font-display font-bold text-kodeksa-dark mb-6">Proyectos Destacados</h2>
+      <p class="text-kodeksa-dark/70 text-lg">
+        Explorá nuestro portfolio de soluciones innovadoras que han transformado negocios.
+      </p>
+    </div>
+
+    <div class="flex justify-center gap-4 mb-12 overflow-x-auto pb-4">
+      {categories.map(category => (
+        <button
+          class="px-6 py-2 rounded-full text-kodeksa-dark/70 hover:text-kodeksa-primary transition-colors font-medium data-[active=true]:bg-kodeksa-primary data-[active=true]:text-white"
+          data-category={category}
+          data-active={category === 'Todos'}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+
+    <div class="grid gap-8">
+      {projects.map(project => (
+        <div 
+          class="group bg-white rounded-2xl p-8 shadow-sm shadow-kodeksa-dark/5"
+          data-project={project.type}
+        >
+          <div class="flex items-start justify-between gap-8 mb-6">
+            <div>
+              <h3 class="text-2xl font-display font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
+                {project.title}
+              </h3>
+              <p class="text-kodeksa-dark/70">{project.shortDescription}</p>
+            </div>
+            <div class="flex gap-2">
+              {project.tags.map(tag => (
+                <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {project.type === 'Web' && (
+            <div class="relative aspect-video rounded-xl overflow-hidden bg-kodeksa-dark/5">
+              <div class="swiper-container web-slider h-full" style="width: 100%; overflow: hidden;">
+                <div class="swiper-wrapper">
+                  {project.images.map(image => (
+                    <div class="swiper-slide">
+                      <img
+                        src={image}
+                        alt={project.title}
+                        class="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+              </div>
+            </div>
+          )}
+
+          {project.type === 'Mobile' && (
+            <div class="overflow-x-auto pb-4">
+              <div class="flex gap-4">
+                {project.images.map(image => (
+                  <div class="flex-none w-[280px] aspect-[9/19.5] rounded-xl overflow-hidden bg-kodeksa-dark/5">
+                    <img
+                      src={image}
+                      alt={project.title}
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {project.type === 'Backend' && (
+            <div class="aspect-video rounded-xl overflow-hidden bg-kodeksa-dark/5">
+              <img
+                src={project.images[0]}
+                alt={project.title}
+                class="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          <button
+            class="mt-6 px-6 py-3 bg-kodeksa-primary text-white rounded-full hover:bg-kodeksa-primary/90 transition-colors text-sm font-medium"
+            onclick={`openProjectModal(${JSON.stringify(project)})`}
+          >
+            Ver más detalles
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Modal -->
+<div
+  id="projectModal"
+  class="fixed inset-0 bg-kodeksa-dark/50 backdrop-blur-sm z-50 hidden"
+  onclick="closeProjectModal(event)"
+>
+  <div class="container mx-auto px-6 py-12 h-full overflow-y-auto">
+    <div class="bg-white rounded-2xl p-8 max-w-4xl mx-auto">
+      <div class="flex justify-between items-start mb-8">
+        <div>
+          <h3 id="modalTitle" class="text-3xl font-display font-bold text-kodeksa-dark mb-2"></h3>
+          <p id="modalDescription" class="text-kodeksa-dark/70"></p>
+        </div>
+        <button
+          onclick="closeProjectModal(event)"
+          class="text-kodeksa-dark/50 hover:text-kodeksa-dark transition-colors"
+        >
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-8">
+        <div>
+          <h4 class="font-bold text-kodeksa-dark mb-4">Stack Tecnológico</h4>
+          <div id="modalStack" class="space-y-4"></div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-kodeksa-dark mb-4">Testimonios</h4>
+          <div id="modalTestimonials" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import Swiper from 'swiper';
+  import { Navigation, Pagination } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/navigation';
+  import 'swiper/css/pagination';
+
+  // Initialize Swiper for web projects
+  document.addEventListener('DOMContentLoaded', () => {
+    // Import the modules dynamically to avoid React import conflicts
+    const swiperModule = Swiper;
+    const { Navigation, Pagination } = swiperModule.modules;
+    
+    document.querySelectorAll('.web-slider').forEach(element => {
+      // Reset any previous styles that might be causing issues
+      element.style.width = '100%';
+      element.style.overflow = 'hidden';
+      
+      new swiperModule(element, {
+        modules: [Navigation, Pagination],
+        slidesPerView: 1,
+        spaceBetween: 0,
+        loop: true,
+        autoHeight: true,
+        watchOverflow: true,
+        observer: true,
+        observeParents: true,
+        resizeObserver: true,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+      });
+    });
+  });
+
+  // Category filtering
+  const categoryButtons = document.querySelectorAll('[data-category]');
+  const projects = document.querySelectorAll('[data-project]');
+
+  categoryButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const category = button.getAttribute('data-category');
+      
+      categoryButtons.forEach(btn => btn.setAttribute('data-active', 'false'));
+      button.setAttribute('data-active', 'true');
+
+      projects.forEach(project => {
+        const projectType = project.getAttribute('data-project');
+        if (category === 'Todos' || category === projectType) {
+          project.style.display = 'block';
+        } else {
+          project.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Modal functionality
+  window.openProjectModal = (project) => {
+    const modal = document.getElementById('projectModal');
+    const title = document.getElementById('modalTitle');
+    const description = document.getElementById('modalDescription');
+    const stack = document.getElementById('modalStack');
+    const testimonials = document.getElementById('modalTestimonials');
+
+    title.textContent = project.title;
+    description.textContent = project.description;
+
+    // Render stack
+    stack.innerHTML = Object.entries(project.stack)
+      .map(([category, technologies]) => `
+        <div>
+          <h5 class="text-sm font-medium text-kodeksa-dark/70 mb-2">${category.charAt(0).toUpperCase() + category.slice(1)}</h5>
+          <div class="flex flex-wrap gap-2">
+            ${technologies.map(tech => `
+              <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
+                ${tech}
+              </span>
+            `).join('')}
+          </div>
+        </div>
+      `)
+      .join('');
+
+    // Render testimonials
+    testimonials.innerHTML = project.testimonials
+      .map(testimonial => `
+        <blockquote class="border-l-4 border-kodeksa-primary pl-4">
+          <p class="text-kodeksa-dark/70 italic mb-2">${testimonial.text}</p>
+          <footer>
+            <strong class="text-kodeksa-dark">${testimonial.author}</strong>
+            <span class="text-kodeksa-dark/70"> - ${testimonial.role}</span>
+          </footer>
+        </blockquote>
+      `)
+      .join('');
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeProjectModal = (event) => {
+    if (event.target === event.currentTarget) {
+      const modal = document.getElementById('projectModal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  };
+</script>
+
+<style>
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: theme('colors.kodeksa.primary');
+  }
+
+  .swiper-pagination-bullet-active {
+    background-color: theme('colors.kodeksa.primary');
+  }
+  
+  .web-slider {
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+  
+  .swiper-wrapper,
+  .swiper-slide {
+    height: auto !important;
+    width: 100% !important;
+  }
+</style>

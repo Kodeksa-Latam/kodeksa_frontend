@@ -1,0 +1,276 @@
+---
+// Interface para Feature desde la API
+interface Feature {
+  id: string;
+  solutionId: string;
+  featureDescription: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Interface para Solution desde la API
+interface ApiSolution {
+  id: string;
+  title: string;
+  icon: string;
+  description: string;
+  isActive: boolean;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+  features: Feature[];
+}
+
+// Interface para nuestra estructura interna
+interface Solution {
+  id: string;
+  title: string;
+  icon: string;
+  description: string;
+  features: string[];
+}
+
+// Datos de respaldo en caso de que la API falle
+const fallbackServices: Solution[] = [
+  {
+    id: "desarrollo",
+    title: "Desarrollo Personalizado",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10 13-5-5 5-5"></path><path d="m14 13 5-5-5-5"></path><path d="M20 21H4"></path></svg>`,
+    description: "Creamos soluciones de software a medida que transforman y elevan la eficiencia de tu empresa. Olvídate de lo genérico, consigue una herramienta única diseñada para tus necesidades específicas.",
+    features: [
+      "Análisis detallado de requisitos",
+      "Desarrollo a medida",
+      "Integración con sistemas existentes",
+      "Escalabilidad según necesidades",
+      "Soporte técnico continuo"
+    ]
+  },
+  {
+    id: "data",
+    title: "Data Management",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>`,
+    description: "Gestionamos tus datos corporativos de manera eficiente, transformándolos en información valiosa para la toma de decisiones. Implementamos soluciones que maximizan el valor de tus activos de datos.",
+    features: [
+      "Diseño de arquitecturas de datos",
+      "Sistemas ETL optimizados",
+      "Data warehousing",
+      "Gobierno de datos",
+      "Limpieza y normalización de datos"
+    ]
+  },
+  {
+  id: "ia",
+  title: "IA y Machine Learning",
+  icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"></path><path d="m4.93 10.93 1.41 1.41"></path><path d="M2 18h2"></path><path d="M20 18h2"></path><path d="m19.07 10.93-1.41 1.41"></path><path d="M22 22H2"></path><path d="m16 6-4 4-4-4"></path><path d="M16 18a4 4 0 0 0-8 0"></path></svg>`,
+  description: "Integrando tecnologías de inteligencia artificial avanzadas como LLM y LangGraph, optimizamos tus sistemas para crear chatbots potentes que se integran con redes sociales y ofrecen respuestas en lenguaje natural. Impulsa tu negocio con soluciones inteligentes que mejoran la interacción con tus clientes.",
+  features: [
+    "Desarrollo de chatbots avanzados con integración en redes sociales",
+    "Respuestas en lenguaje natural impulsadas por LLM",
+    "Modelos adaptativos para diversas necesidades empresariales",
+    "Optimización de procesos automatizados mediante IA",
+    "Análisis de interacción e integración inteligente con plataformas digitales"
+  ]
+  },
+  {
+    id: "cloud",
+    title: "Infraestructura Cloud",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>`,
+    description: "Diseñamos y gestionamos infraestructuras cloud robustas y escalables que se adaptan a las necesidades cambiantes de tu negocio. Optimizamos costos mientras garantizamos rendimiento y seguridad.",
+    features: [
+      "Arquitectura cloud-native",
+      "Migración a la nube",
+      "Optimización de costos",
+      "Automatización de infraestructura",
+      "Monitoreo y gestión continua"
+    ]
+  },
+  {
+  id: "digital-growth",
+  title: "Crecimiento Digital",
+  icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>`,
+  description: "Transformamos tu presencia digital con estrategias creativas y efectivas. Ofrecemos diseño gráfico, experiencia de usuario UI/UX, branding, fotografía profesional y servicios de marketing digital que optimizan tu visibilidad en el mercado y te ayudan a alcanzar nuevos públicos. Impulsa tu marca con soluciones integradas que aseguran un crecimiento sólido y sostenido.",
+  features: [
+    "Diseño gráfico personalizado para impactar visualmente",
+    "Estrategias UI/UX orientadas a la mejora de la experiencia del usuario",
+    "Desarrollo y gestión de branding para fortalecer tu identidad digital",
+    "Fotografía profesional que destaca la esencia de tu marca",
+    "Optimización SEO y estrategias de marketing digital efectivas"
+  ]
+}
+
+];
+
+
+// Obtener la URL base de la API desde las variables de entorno
+const apiBaseUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+// Función para obtener las soluciones
+let services: Solution[] = fallbackServices;
+let error: string | null = null;
+
+try {
+  // Intenta obtener las soluciones de la API
+  const response = await fetch(`${apiBaseUrl}/api/solutions`);
+  
+  if (response.ok) {
+    const apiSolutions: ApiSolution[] = await response.json();
+    
+    // Transforma la respuesta de la API al formato deseado
+    services = apiSolutions.map(solution => ({
+      id: solution.id,
+      title: solution.title,
+      icon: solution.icon, // Usamos el SVG directamente
+      description: solution.description,
+      features: solution.features.map(feature => feature.featureDescription)
+    }));
+  } else {
+    throw new Error('Error al obtener las soluciones de la API');
+  }
+} catch (err) {
+  console.error('Error al obtener las soluciones de la API:', err);
+  error = 'No se pudieron cargar las soluciones. Usando datos de respaldo.';
+  // Usamos los datos de respaldo definidos arriba
+}
+
+// Servicio activo por defecto
+let activeServiceId = services.length > 0 ? services[0].id : "";
+---
+
+<section id="servicios" class="py-32 bg-kodeksa-dark/[0.02]">
+  <div class="container mx-auto px-6">
+    <div class="max-w-2xl mx-auto text-center mb-16">
+      <h2 class="text-4xl font-display font-bold text-kodeksa-dark mb-6">
+        SOLUCIONES
+      </h2>
+      <p class="text-kodeksa-dark/70 text-lg">
+        Explorá nuestro portfolio de soluciones innovadoras que han transformado negocios.
+      </p>
+      
+      {error && (
+        <div class="mt-4 text-yellow-600 bg-yellow-50 p-2 rounded">
+          {error}
+        </div>
+      )}
+    </div>
+
+    <div class="grid lg:grid-cols-[1fr,3fr] gap-8">
+      <!-- Panel de navegación (botones) -->
+      <div class="flex flex-col gap-4">
+        {services.map(service => (
+          <button
+            class="text-left px-6 py-4 rounded-xl border-2 transition-all flex items-center gap-4 service-button group hover:border-kodeksa-primary/20"
+            data-service={service.id}
+            data-active={service.id === activeServiceId ? "true" : "false"}
+          >
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-kodeksa-dark/5 text-kodeksa-primary group-hover:bg-kodeksa-primary group-hover:text-white transition-colors">
+              <Fragment set:html={service.icon} />
+            </div>
+            <div>
+              <h3 class="font-bold text-kodeksa-dark text-xl group-hover:text-kodeksa-primary transition-colors">
+                {service.title}
+              </h3>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <!-- Panel de contenido -->
+      <div class="bg-white rounded-2xl shadow-sm shadow-kodeksa-dark/5 p-8">
+        {services.map(service => (
+          <div 
+            class="service-content space-y-6" 
+            data-service={service.id}
+            data-active={service.id === activeServiceId ? "true" : "false"}
+          >
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 flex items-center justify-center rounded-full bg-kodeksa-primary/10 text-kodeksa-primary">
+                <Fragment set:html={service.icon} />
+              </div>
+              <h3 class="text-2xl font-display font-bold text-kodeksa-dark">{service.title}</h3>
+            </div>
+            
+            <p class="text-kodeksa-dark/70 text-lg leading-relaxed">
+              {service.description}
+            </p>
+
+            <div class="pt-4">
+              <h4 class="text-lg font-bold text-kodeksa-dark mb-4">Características principales:</h4>
+              <ul class="grid sm:grid-cols-2 gap-4">
+                {service.features.map(feature => (
+                  <li class="flex items-start gap-2">
+                    <svg class="w-5 h-5 text-kodeksa-primary flex-none mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span class="text-kodeksa-dark/70">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="pt-4">
+              <a 
+                href="#contacto" 
+                class="inline-flex items-center px-6 py-3 bg-kodeksa-primary text-white rounded-full hover:bg-kodeksa-primary/90 transition-colors text-sm font-medium"
+              >
+                Consultar por este servicio
+                <svg class="ml-2 w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Estilos para los botones activos */
+  .service-button[data-active="true"] {
+    border-color: var(--color-kodeksa-primary);
+    background-color: rgba(26, 77, 46, 0.05);
+  }
+
+  .service-button[data-active="true"] h3 {
+    color: var(--color-kodeksa-primary);
+  }
+
+  /* Esconder contenido inactivo */
+  .service-content[data-active="false"] {
+    display: none;
+  }
+
+  .service-content[data-active="true"] {
+    display: block;
+  }
+</style>
+
+<script>
+  // Función para activar un servicio
+  function activateService(serviceId: string) {
+    // Desactivar todos los botones y contenidos
+    document.querySelectorAll('.service-button').forEach(button => {
+      button.setAttribute('data-active', 'false');
+    });
+    
+    document.querySelectorAll('.service-content').forEach(content => {
+      content.setAttribute('data-active', 'false');
+    });
+    
+    // Activar el botón y contenido seleccionado
+    document.querySelector(`.service-button[data-service="${serviceId}"]`)?.setAttribute('data-active', 'true');
+    document.querySelector(`.service-content[data-service="${serviceId}"]`)?.setAttribute('data-active', 'true');
+  }
+
+  // Agregar event listeners a los botones
+  document.querySelectorAll('.service-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const serviceId = button.getAttribute('data-service');
+      if (serviceId) {
+        activateService(serviceId);
+      }
+    });
+  });
+</script>

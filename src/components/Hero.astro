@@ -1,0 +1,58 @@
+---
+import { Image } from 'astro:assets';
+---
+
+<section class="relative min-h-screen flex items-center">
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(26,77,46,0.05),transparent_70%)]"></div>
+  </div>
+
+  <div class="container mx-auto px-6 relative z-10 pt-32">
+    <div class="max-w-4xl mx-auto text-center space-y-8">
+      <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-display font-bold text-kodeksa-dark leading-[1.1] tracking-tight">
+        <span class="block text-kodeksa-primary">Innovación.</span>
+        <span class="block">Agilidad.</span>
+        <span class="block">Escalabilidad.</span>
+      </h1>
+      
+      <p class="text-xl text-kodeksa-dark/70 max-w-2xl mx-auto">
+        Transformamos conceptos en soluciones digitales innovadoras que impulsan el crecimiento de tu negocio.
+      </p>
+
+      <div class="flex flex-wrap gap-4 justify-center pt-8">
+        <a 
+          href="#contacto"
+          class="px-8 py-4 bg-kodeksa-primary text-white rounded-full hover:bg-kodeksa-primary/90 transition-colors text-lg font-medium"
+        >
+          Trabaja con nosotros
+        </a>
+        <a 
+          href="#proyectos"
+          class="px-8 py-4 border-2 border-kodeksa-dark/10 text-kodeksa-dark rounded-full hover:border-kodeksa-primary/20 transition-colors text-lg font-medium group"
+        >
+          Ver proyectos
+          <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+        </a>
+      </div>
+
+      <div class="pt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+        <div>
+          <div class="font-mono text-4xl font-bold text-kodeksa-primary mb-2">50+</div>
+          <div class="text-kodeksa-dark/70">Proyectos completados</div>
+        </div>
+        <div>
+          <div class="font-mono text-4xl font-bold text-kodeksa-primary mb-2">15+</div>
+          <div class="text-kodeksa-dark/70">Profesionales expertos</div>
+        </div>
+        <div>
+          <div class="font-mono text-4xl font-bold text-kodeksa-primary mb-2">98%</div>
+          <div class="text-kodeksa-dark/70">Satisfacción cliente</div>
+        </div>
+        <div>
+          <div class="font-mono text-4xl font-bold text-kodeksa-primary mb-2">24/7</div>
+          <div class="text-kodeksa-dark/70">Soporte técnico</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

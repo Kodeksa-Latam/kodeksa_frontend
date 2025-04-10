@@ -1,0 +1,197 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+
+// Simulando datos de blog que normalmente vendrían de un CMS
+const allPosts = [
+  {
+    id: 'tendencias-desarrollo-2025',
+    title: 'Tendencias de desarrollo web para 2025',
+    excerpt: 'Descubre qué tecnologías y prácticas definirán el desarrollo web en el próximo año.',
+    date: '24 Marzo, 2025',
+    categories: ['Desarrollo', 'Frontend'],
+    image: '/images/blog/tendencias-desarrollo.jpg',
+    author: {
+      name: 'Keny Ramírez',
+      avatar: '/images/team/keny-ramirez.png'
+    }
+  },
+  {
+    id: 'ia-empresas',
+    title: 'Cómo implementar IA en empresas medianas',
+    excerpt: 'Una guía práctica para incorporar inteligencia artificial en empresas sin un gran presupuesto.',
+    date: '15 Marzo, 2025',
+    categories: ['IA', 'Negocio'],
+    image: '/images/blog/ia-empresas.jpg',
+    author: {
+      name: 'Sofía Ferrazano',
+      avatar: '/images/team/sofia-ferrazano.png'
+    }
+  },
+  {
+    id: 'optimizacion-cloud',
+    title: 'Optimización de costos en infraestructura cloud',
+    excerpt: 'Estrategias efectivas para reducir costos sin sacrificar rendimiento en tus servicios cloud.',
+    date: '10 Marzo, 2025',
+    categories: ['Cloud', 'DevOps', 'Finanzas'],
+    image: '/images/blog/cloud-costos.jpg',
+    author: {
+      name: 'Estefany Garcia',
+      avatar: '/images/team/estefany-garcia.png'
+    }
+  },
+  {
+    id: 'mejores-practicas-apis',
+    title: 'Mejores prácticas para diseñar APIs RESTful',
+    excerpt: 'Principios de diseño y patrones recomendados para crear APIs RESTful consistentes y fáciles de usar.',
+    date: '5 Marzo, 2025',
+    categories: ['Desarrollo', 'Backend'],
+    image: '/images/blog/api-design.jpg',
+    author: {
+      name: 'Keny Ramírez',
+      avatar: '/images/team/keny-ramirez.png'
+    }
+  },
+  {
+    id: 'marketing-digital-2025',
+    title: 'Estrategias de marketing digital para 2025',
+    excerpt: 'Las tendencias más importantes en marketing digital que definirán el éxito de las campañas este año.',
+    date: '28 Febrero, 2025',
+    categories: ['Marketing'],
+    image: '/images/blog/digital-marketing.jpg',
+    author: {
+      name: 'Ricardo Badtke',
+      avatar: '/images/team/ricardo-badtke.png'
+    }
+  },
+  {
+    id: 'devops-prácticas',
+    title: 'DevOps: prácticas esenciales para equipos de desarrollo',
+    excerpt: 'Cómo implementar DevOps efectivamente en tu organización para mejorar la colaboración y productividad.',
+    date: '20 Febrero, 2025',
+    categories: ['DevOps'],
+    image: '/images/blog/devops.jpg',
+    author: {
+      name: 'Estefany Garcia',
+      avatar: '/images/team/estefany-garcia.png'
+    }
+  }
+];
+
+// Extraer todas las categorías únicas de los artículos
+const allCategories = [...new Set(allPosts.flatMap(post => post.categories))];
+// Agregar la categoría "Todos" al principio
+const categories = ['Todos', ...allCategories].sort((a, b) => a === 'Todos' ? -1 : b === 'Todos' ? 1 : a.localeCompare(b));
+---
+
+<Layout title="Blog - Kodeksa" description="Artículos y recursos sobre tecnología, desarrollo y tendencias del sector.">
+  <Navbar />
+  
+  <main class="pt-32 pb-20">
+    <div class="container mx-auto px-6">
+      <div class="max-w-3xl mx-auto text-center mb-16">
+        <h1 class="text-5xl font-display font-bold text-kodeksa-dark mb-6">Blog</h1>
+        <p class="text-kodeksa-dark/70 text-xl">
+          Artículos y recursos sobre tecnología, desarrollo y tendencias del sector.
+        </p>
+      </div>
+      
+      <!-- Filtro por categorías generado dinámicamente --> 
+      <div class="flex justify-center flex-wrap gap-4 mb-12 pb-4">
+        {categories.map(category => (
+          <button
+            class="px-6 py-2 rounded-full text-kodeksa-dark/70 hover:text-kodeksa-primary transition-colors font-medium data-[active=true]:bg-kodeksa-primary data-[active=true]:text-white"
+            data-category={category}
+            data-active={category === 'Todos'}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+      
+      <!-- Artículos de blog -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {allPosts.map(post => (
+          <article 
+            class="bg-white rounded-2xl shadow-sm shadow-kodeksa-dark/5 overflow-hidden group flex flex-col h-full"
+            data-categories={post.categories.join(',')} 
+          >
+            <div class="aspect-[16/10] overflow-hidden">
+              <img 
+                src={post.image || `/images/blog/default.jpg`} 
+                alt={post.title}
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+              <div class="flex justify-between items-start text-sm mb-4">
+                <span class="text-kodeksa-dark/60">{post.date}</span>
+                <div class="flex flex-wrap gap-2 justify-end">
+                  {post.categories.map(category => (
+                    <span class="px-3 py-1 bg-kodeksa-dark/5 rounded-full text-kodeksa-dark/70">{category}</span>
+                  ))}
+                </div>
+              </div>
+              <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors mb-4">
+                {post.title}
+              </h3>
+              <p class="text-kodeksa-dark/70 line-clamp-3 mb-4">
+                {post.excerpt}
+              </p>
+              <div class="mt-auto pt-4 flex justify-between items-center border-t border-kodeksa-dark/10">
+                <div class="flex items-center gap-2">
+                  <img 
+                    src={post.author.avatar} 
+                    alt={post.author.name}
+                    class="w-8 h-8 rounded-full object-cover"
+                  />
+                  <span class="text-sm text-kodeksa-dark/70">{post.author.name}</span>
+                </div>
+                <a 
+                  href={`/blog/${post.id}`}
+                  class="text-kodeksa-primary font-medium flex items-center gap-1 hover:gap-2 transition-all"
+                >
+                  Leer más
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>
+
+<script>
+  // Filtrado por categorías
+  document.addEventListener('DOMContentLoaded', () => {
+    const categoryButtons = document.querySelectorAll('[data-category]');
+    const articles = document.querySelectorAll('article[data-categories]');
+  
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const category = button.getAttribute('data-category');
+      
+        // Actualizar botones activos
+        categoryButtons.forEach(btn => btn.setAttribute('data-active', 'false'));
+        button.setAttribute('data-active', 'true');
+      
+        // Filtrar artículos
+        articles.forEach(article => {
+          const articleCategories = article.getAttribute('data-categories').split(',');
+          if (category === 'Todos' || articleCategories.includes(category)) {
+            article.style.display = 'flex';
+          } else {
+            article.style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>

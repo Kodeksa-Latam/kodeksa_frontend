@@ -1,0 +1,277 @@
+---
+import TeamMemberCard from './TeamMemberCard.astro';
+
+// Interface para la configuración de la tarjeta
+interface CardConfiguration {
+  id: string;
+  userId: string;
+  imageSize: number;
+  imageLeftOffset?: string;
+  bgColor: string;
+  textAbove: string;
+  textAboveColor: string;
+  aboveFontFamily: string;
+  aboveFontSize: string;
+  aboveFontWeight: string;
+  aboveLetterSpacing: string;
+  aboveTextTransform: string;
+  aboveTextTopOffset: string;
+  textBelow: string;
+  belowFontWeight: string;
+  belowLetterSpacing: string;
+  belowFontFamily: string;
+  belowFontSize: string;
+  belowTextTransform: string;
+  textBelowColor: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Interface para un usuario/miembro del equipo
+interface TeamMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isActive: boolean;
+  role: string;
+  slug: string;
+  image: string;
+  showCurriculum: boolean;
+  createdAt: string;
+  updatedAt: string;
+  cardConfiguration: CardConfiguration;
+  stack?: string[]; // Lista de tecnologías opcional
+}
+
+// Interface para la respuesta de la API
+interface ApiResponse {
+  items: TeamMember[];
+  meta: {
+    currentPage: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+// Datos de respaldo en caso de que la API falle
+const fallbackTeam = [
+  {
+    id: "dev-1",
+    firstName: "Keny",
+    lastName: "Ramírez",
+    email: "keny@example.com",
+    isActive: true,
+    role: "Senior Full-stack Developer",
+    slug: "keny-ramirez",
+    image: "/images/team/keny-ramirez.png",
+    showCurriculum: false,
+    createdAt: "2025-04-09T20:44:39.522Z",
+    updatedAt: "2025-04-09T20:44:39.522Z",
+    cardConfiguration: {
+      id: "card-1",
+      userId: "dev-1",
+      imageSize: 90,
+      bgColor: "#eae7dc",
+      textAbove: "FULL    STACK",
+      textAboveColor: "#096551",
+      aboveFontFamily: "'Clash Display', sans-serif",
+      aboveFontSize: "3.5rem",
+      aboveFontWeight: "700",
+      aboveLetterSpacing: "0.23em",
+      aboveTextTransform: "uppercase",
+      aboveTextTopOffset: "0",
+      textBelow: "DEVELOPER",
+      belowFontWeight: "700",
+      belowLetterSpacing: "0.35em",
+      belowFontFamily: "'Clash Display', sans-serif",
+      belowFontSize: "1.5rem",
+      belowTextTransform: "uppercase",
+      textBelowColor: "#ccdbaa",
+      createdAt: "2025-04-09T20:44:39.560Z",
+      updatedAt: "2025-04-09T20:44:39.560Z"
+    },
+    stack: ['Flutter', 'Angular', 'Node.js', 'FastApi', 'Flask', 'Java']
+  },
+  {
+    id: "dev-2",
+    firstName: "Ricardo",
+    lastName: "Badtke",
+    email: "ricardo@example.com",
+    isActive: true,
+    role: "Asuntos legales",
+    slug: "ricardo-badtke",
+    image: "/images/team/ricardo-badtke.png",
+    showCurriculum: false,
+    createdAt: "2025-04-09T20:44:39.522Z",
+    updatedAt: "2025-04-09T20:44:39.522Z",
+    cardConfiguration: {
+      id: "card-2",
+      userId: "dev-2",
+      imageSize: 105,
+      imageLeftOffset: "14%",
+      bgColor: "#7facbe",
+      textAbove: "Lawyer",
+      textAboveColor: "#add693",
+      aboveFontFamily: "'Clash Display', sans-serif",
+      aboveFontSize: "3.5rem",
+      aboveFontWeight: "700",
+      aboveLetterSpacing: "0.23em",
+      aboveTextTransform: "uppercase",
+      aboveTextTopOffset: "0",
+      textBelow: "caso cerrado",
+      belowFontWeight: "700",
+      belowLetterSpacing: "0.35em",
+      belowFontFamily: "'Clash Display', sans-serif",
+      belowFontSize: "1.5rem",
+      belowTextTransform: "uppercase",
+      textBelowColor: "#b3edb2",
+      createdAt: "2025-04-09T20:44:39.560Z",
+      updatedAt: "2025-04-09T20:44:39.560Z"
+    },
+    stack: ['Figma', 'Adobe XD', 'Webflow']
+  }
+];
+
+// Obtener la URL base de la API desde las variables de entorno
+const apiBaseUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+
+// Función para obtener los miembros del equipo
+let team: TeamMember[] = [];
+let error: string | null = null;
+
+try {
+  // Intenta obtener los miembros del equipo desde la API
+  const response = await fetch(`${apiBaseUrl}/api/users?page=1&limit=4&isActive=true`);
+  
+  if (response.ok) {
+    const data: ApiResponse = await response.json();
+    team = data.items;
+    
+    // Aseguramos que todos los miembros tengan un stack (aunque esté vacío)
+    team = team.map(member => ({
+      ...member,
+      stack: member.stack || []
+    }));
+  } else {
+    throw new Error('Error al obtener los miembros del equipo');
+  }
+} catch (err) {
+  console.error('Error al obtener los miembros del equipo:', err);
+  error = 'No se pudieron cargar los miembros del equipo. Usando datos de respaldo.';
+  team = fallbackTeam;
+}
+
+// Colores de respaldo para miembros sin configuración completa
+const bgColors = ["#E8F4F2", "#FFF8E6", "#F0F0F0", "#E6F1FF"];
+const textColors = ["#1A4D2E", "#D04848", "#264653", "#444444"];
+---
+
+<section id="profesionales" class="py-32 bg-kodeksa-dark/[0.02]">
+  <div class="container mx-auto px-6">
+    <div class="max-w-2xl mx-auto text-center mb-16">
+      <h2 class="text-4xl font-display font-bold text-kodeksa-dark mb-6">Nuestro Equipo</h2>
+      <p class="text-kodeksa-dark/70 text-lg">
+        Conocé a los profesionales que hacen posible transformar ideas en realidad.
+      </p>
+      
+      {error && (
+        <div class="mt-4 text-yellow-600 bg-yellow-50 p-2 rounded">
+          {error}
+        </div>
+      )}
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      {team.map((member, index) => {
+        const config = member.cardConfiguration;
+        
+        return (member.showCurriculum)
+        ?
+        (
+          <a href={`/engineers/${member.slug}`} class="group">
+            <TeamMemberCard
+              image={member.image}
+              altText={`${member.firstName} ${member.lastName}`}
+              text_above={config.textAbove}
+              text_below={config.textBelow}
+              bgColor={config.bgColor || bgColors[index % bgColors.length]}
+              textAboveColor={config.textAboveColor || textColors[index % textColors.length]}
+              textBelowColor={config.textBelowColor || textColors[index % textColors.length]}
+              imageSize={config.imageSize || 90}
+              imageLeftOffset={config.imageLeftOffset || "0"}
+              aboveFontFamily={config.aboveFontFamily || "'Clash Display', sans-serif"}
+              belowFontFamily={config.belowFontFamily || "'JetBrains Mono', sans-serif"}
+              aboveFontSize={config.aboveFontSize || "3.5rem"}
+              belowFontSize={config.belowFontSize || "1.5rem"}
+              aboveFontWeight={config.aboveFontWeight || "700"}
+              belowFontWeight={config.belowFontWeight || "700"}
+              aboveLetterSpacing={config.aboveLetterSpacing || "0.23em"}
+              belowLetterSpacing={config.belowLetterSpacing || "0.35em"}
+              aboveTextTransform={config.aboveTextTransform || "uppercase"}
+              belowTextTransform={config.belowTextTransform || "uppercase"}
+              aboveTextTopOffset={config.aboveTextTopOffset || "0"}
+            />
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
+                  {member.firstName} {member.lastName}
+                </h3>
+                <p class="text-kodeksa-dark/70">{member.role}</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                {member.stack && member.stack.map(tech => (
+                  <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </a>
+        )
+        :(<a class="group">
+            <TeamMemberCard
+              image={member.image}
+              altText={`${member.firstName} ${member.lastName}`}
+              text_above={config.textAbove}
+              text_below={config.textBelow}
+              bgColor={config.bgColor || bgColors[index % bgColors.length]}
+              textAboveColor={config.textAboveColor || textColors[index % textColors.length]}
+              textBelowColor={config.textBelowColor || textColors[index % textColors.length]}
+              imageSize={config.imageSize || 90}
+              imageLeftOffset={config.imageLeftOffset || "0"}
+              aboveFontFamily={config.aboveFontFamily || "'Clash Display', sans-serif"}
+              belowFontFamily={config.belowFontFamily || "'JetBrains Mono', sans-serif"}
+              aboveFontSize={config.aboveFontSize || "3.5rem"}
+              belowFontSize={config.belowFontSize || "1.5rem"}
+              aboveFontWeight={config.aboveFontWeight || "700"}
+              belowFontWeight={config.belowFontWeight || "700"}
+              aboveLetterSpacing={config.aboveLetterSpacing || "0.23em"}
+              belowLetterSpacing={config.belowLetterSpacing || "0.35em"}
+              aboveTextTransform={config.aboveTextTransform || "uppercase"}
+              belowTextTransform={config.belowTextTransform || "uppercase"}
+              aboveTextTopOffset={config.aboveTextTopOffset || "0"}
+            />
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
+                  {member.firstName} {member.lastName}
+                </h3>
+                <p class="text-kodeksa-dark/70">{member.role}</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                {member.stack && member.stack.map(tech => (
+                  <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </a>);
+      })}
+    </div>
+  </div>
+</section>

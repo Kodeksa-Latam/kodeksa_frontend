@@ -1,0 +1,85 @@
+---
+interface Props {
+  image: string;                  // URL de la imagen
+  altText: string;                // Texto alternativo para la imagen
+  text_above: string;             // Texto que aparecerá en la parte superior
+  text_below: string;             // Texto que aparecerá en la parte inferior
+  bgColor: string;                // Color de fondo de la card (código HEX)
+  textAboveColor?: string;        // Color del texto superior (código HEX)
+  textBelowColor?: string;        // Color del texto inferior (código HEX)
+  imageSize?: number;             // Tamaño de la imagen (porcentaje de 1 a 100)
+  aboveFontFamily?: string;       // Familia tipográfica para el texto superior
+  belowFontFamily?: string;       // Familia tipográfica para el texto inferior
+  aboveFontSize?: string;         // Tamaño de fuente para el texto superior
+  belowFontSize?: string;         // Tamaño de fuente para el texto inferior
+  aboveFontWeight?: string;       // Peso de fuente para el texto superior
+  belowFontWeight?: string;       // Peso de fuente para el texto inferior
+  aboveLetterSpacing?: string;    // Espaciado entre letras para texto superior
+  belowLetterSpacing?: string;    // Espaciado entre letras para texto inferior
+  aboveTextTransform?: string;    // Transformación de texto para texto superior
+  belowTextTransform?: string;    // Transformación de texto para texto inferior
+  aboveTextTopOffset?: string;    // Distancia desde el top para el texto superior (ej: "5px", "2rem", "10%")
+  imageLeftOffset?: string;       // Distancia desde la izquierda para la imagen
+}
+
+const { 
+  image, 
+  altText, 
+  text_above = '', 
+  text_below = '',
+  bgColor,
+  textAboveColor = "#151515",
+  textBelowColor = "#151515",
+  imageSize = 60, // por defecto, la imagen ocupa el 60% del alto
+  aboveFontFamily = "'Clash Display', sans-serif",
+  belowFontFamily = "'JetBrains Mono', monospace",
+  aboveFontSize = "1.5rem",
+  belowFontSize = "0.9rem",
+  aboveFontWeight = "700",
+  belowFontWeight = "400",
+  aboveLetterSpacing = "0.08em",
+  belowLetterSpacing = "0.05em",
+  aboveTextTransform = "uppercase",
+  belowTextTransform = "uppercase",
+  aboveTextTopOffset = "0",  // Por defecto, sin offset adicional
+  imageLeftOffset = "0", 
+} = Astro.props;
+
+// Calcular el alto de la imagen
+const imageHeight = `${imageSize}%`;
+
+// Crear variables de estilo
+const cardStyle = `background-color: ${bgColor} !important;`;
+const aboveTextStyle = `color: ${textAboveColor} !important; font-family: ${aboveFontFamily} !important; font-size: ${aboveFontSize} !important; font-weight: ${aboveFontWeight} !important; letter-spacing: ${aboveLetterSpacing} !important; text-transform: ${aboveTextTransform} !important;`;
+const belowTextStyle = `color: ${textBelowColor} !important; font-family: ${belowFontFamily} !important; font-size: ${belowFontSize} !important; font-weight: ${belowFontWeight} !important; letter-spacing: ${belowLetterSpacing} !important; text-transform: ${belowTextTransform} !important;`;
+const belowTextStyleShadow = `color: #2429287d !important; font-family: ${belowFontFamily} !important; font-size: ${belowFontSize} !important; font-weight: ${belowFontWeight} !important; letter-spacing: ${belowLetterSpacing} !important; text-transform: ${belowTextTransform} !important;`;
+---
+
+<div class="aspect-[3/4] rounded-2xl overflow-hidden mb-6 relative group" style={cardStyle}>
+  <!-- Texto ARRIBA -->
+  <div class="absolute top-0 left-0 w-full p-5 z-10" style={`top: ${aboveTextTopOffset};`}>
+    <p style={aboveTextStyle} set:html={text_above}></p>
+  </div>
+
+  <!-- Imagen en el medio, alineada al bottom -->
+  <div class="absolute bottom-0 left-0 right-0 z-20" style={`height: ${imageHeight}` } >
+    <img
+      src={image}
+      alt={altText}
+      class="w-full h-full object-cover transition duration-500 group-hover:scale-105 object-top"
+      style={`margin-left:${imageLeftOffset};`}
+      loading="lazy"
+    />
+  </div>
+  
+  <!-- Texto ABAJO -->
+  <div class="absolute bottom-[-2px] left-[2px] p-5 z-20">
+    <p style={belowTextStyleShadow} set:html={text_below}></p>
+  </div>
+  <div class="absolute bottom-0 left-0 w-full p-5 z-30">
+    <p style={belowTextStyle} set:html={text_below}></p>
+  </div>
+  
+  <!-- Capa de color al hacer hover (opcional) -->
+  <div class="absolute inset-0 bg-kodeksa-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-30"></div>
+</div>
