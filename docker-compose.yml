@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        PUBLIC_API_URL: https://api.kodeksa.lat
     container_name: kodeksa_frontend
     ports:
       - "4000:4000"
