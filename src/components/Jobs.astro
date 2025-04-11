@@ -1,27 +1,30 @@
 ---
-const jobs = [
-  {
-    title: 'Senior Frontend Developer',
-    type: 'Remoto',
-    experience: '5+ años',
-    stack: ['React', 'TypeScript', 'Next.js'],
-    description: 'Buscamos un desarrollador frontend senior para liderar proyectos enterprise y mentorear al equipo.'
-  },
-  {
-    title: 'Backend Developer',
-    type: 'Híbrido',
-    experience: '3+ años',
-    stack: ['Node.js', 'PostgreSQL', 'AWS'],
-    description: 'Desarrollador backend con experiencia en arquitecturas distribuidas y microservicios.'
-  },
-  {
-    title: 'Mobile Developer',
-    type: 'Remoto',
-    experience: '4+ años',
-    stack: ['React Native', 'iOS', 'Android'],
-    description: 'Desarrollador mobile para crear aplicaciones nativas y cross-platform de alto rendimiento.'
+// Interface para las vacantes
+interface Vacancy {
+  title: string;
+  type: string;
+  experience: string;
+  stack: string[];
+  description: string;
+}
+
+// Obtener las vacantes directamente desde nuestro endpoint
+let jobs: Vacancy[] = [];
+let error: string | null = null;
+
+try {
+  // Llamamos a nuestro propio endpoint interno
+  const response = await fetch(new URL('/api/vacancies.json', Astro.url));
+  
+  if (response.ok) {
+    jobs = await response.json();
+  } else {
+    throw new Error('Error al obtener las vacantes');
   }
-];
+} catch (err) {
+  console.error('Error al obtener las vacantes:', err);
+  error = 'No se pudieron cargar las vacantes. Usando datos de respaldo.';
+}
 ---
 
 <section id="vacantes" class="py-32">
