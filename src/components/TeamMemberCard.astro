@@ -73,12 +73,12 @@ const belowTextStyleShadow = `color: #2429287d !important; font-family: ${belowF
   </div>
   
   <!-- Texto ABAJO -->
-  <div class="absolute bottom-[-2px] left-[2px] p-5 z-20">
-    <p style={belowTextStyleShadow} set:html={text_below}></p>
-  </div>
-  <div class="absolute bottom-0 left-0 w-full p-5 z-30">
-    <p style={belowTextStyle} set:html={text_below}></p>
-  </div>
+<div class="absolute bottom-[0px] left-[4px] p-5 z-20 w-full">
+  <p style={belowTextStyleShadow + 'text-align: center;'} set:html={text_below}></p>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-5 z-30">
+  <p style={belowTextStyle + 'text-align: center;'} set:html={text_below}></p>
+</div>
   
   <!-- Capa de color al hacer hover (opcional) -->
   <div class="absolute inset-0 bg-kodeksa-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-30"></div>
