@@ -44,25 +44,25 @@ try {
 
 // Lista de países con sus códigos telefónicos
 const countryCodes = [
-    { code: '+54', country: 'Argentina' },
-    { code: '+591', country: 'Bolivia' },
-    { code: '+56', country: 'Chile' },
-    { code: '+57', country: 'Colombia' },
-    { code: '+506', country: 'Costa Rica' },
-    { code: '+53', country: 'Cuba' },
-    { code: '+593', country: 'Ecuador' },
-    { code: '+503', country: 'El Salvador' },
-    { code: '+34', country: 'España' },
-    { code: '+502', country: 'Guatemala' },
-    { code: '+504', country: 'Honduras' },
-    { code: '+52', country: 'México' },
-    { code: '+505', country: 'Nicaragua' },
-    { code: '+507', country: 'Panamá' },
-    { code: '+595', country: 'Paraguay' },
-    { code: '+51', country: 'Perú' },
-    { code: '+1', country: 'República Dominicana / Estados Unidos / Canadá' },
-    { code: '+598', country: 'Uruguay' },
-    { code: '+58', country: 'Venezuela' }
+    { code: '+54', country: '🇦🇷' },
+    { code: '+591', country: '🇧🇴' },
+    { code: '+56', country: '🇨🇱' },
+    { code: '+57', country: '🇨🇴' },
+    { code: '+506', country: '🇨🇷' },
+    { code: '+53', country: '🇨🇺' },
+    { code: '+593', country: '🇪🇨' },
+    { code: '+503', country: '🇸🇻' },
+    { code: '+34', country: '🇪🇸' },
+    { code: '+502', country: '🇬🇹' },
+    { code: '+504', country: '🇭🇳' },
+    { code: '+52', country: '🇲🇽' },
+    { code: '+505', country: '🇳🇮' },
+    { code: '+507', country: '🇵🇦' },
+    { code: '+595', country: '🇵🇾' },
+    { code: '+51', country: '🇵🇪' },
+    { code: '+1', country: '🇩🇴 / 🇺🇸 / 🇨🇦' },
+    { code: '+598', country: '🇺🇾' },
+    { code: '+58', country: '🇻🇪' }
 ];
 
 // Función para formatear la fecha
@@ -187,7 +187,7 @@ function formatDate(dateString: string): string {
                                         required
                                     >
                                         {countryCodes.map(country => (
-                                            <option value={country.code}>{country.code} ({country.country})</option>
+                                            <option value={country.code}>{country.country} {country.code}</option>
                                         ))}
                                     </select>
                                     <input
@@ -469,3 +469,4 @@ function formatDate(dateString: string): string {
             errorMessage?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     });
+</script>
