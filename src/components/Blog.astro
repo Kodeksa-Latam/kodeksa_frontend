@@ -1,43 +1,102 @@
 ---
-// Definición de los artículos del blog
-const blogPosts = [
-  {
-    id: 'tendencias-desarrollo-2025',
-    title: 'Tendencias de desarrollo web para 2025',
-    excerpt: 'Descubre qué tecnologías y prácticas definirán el desarrollo web en el próximo año.',
-    date: '24 Marzo, 2025',
-    categories: ['Desarrollo', 'Frontend'],  
-    image: '/images/blog/tendencias-desarrollo.jpg',
-    author: {
-      name: 'Keny Ramírez',
-      avatar: '/images/team/keny-ramirez.png'
-    }
-  },
-  {
-    id: 'ia-empresas',
-    title: 'Cómo implementar IA en empresas medianas',
-    excerpt: 'Una guía práctica para incorporar inteligencia artificial en empresas sin un gran presupuesto.',
-    date: '15 Marzo, 2025',
-    categories: ['IA', 'Negocio'], 
-    image: '/images/blog/ia-empresas.jpg',
-    author: {
-      name: 'Sofía Ferrazano',
-      avatar: '/images/team/sofia-ferrazano.png'
-    }
-  },
-  {
-    id: 'optimizacion-cloud',
-    title: 'Optimización de costos en infraestructura cloud',
-    excerpt: 'Estrategias efectivas para reducir costos sin sacrificar rendimiento en tus servicios cloud.',
-    date: '10 Marzo, 2025',
-    categories: ['Cloud', 'DevOps', 'Finanzas'],  // Múltiples categorías
-    image: '/images/blog/cloud-costos.jpg',
-    author: {
-      name: 'Estefany Garcia',
-      avatar: '/images/team/estefany-garcia.png'
-    }
+// Interfaces para la respuesta de la API
+interface BlogSection {
+  id: string;
+  blogId: string;
+  order: number;
+  type: 'paragraph' | 'heading' | 'subheading' | 'image' | 'list';
+  content: string | null;
+  src: string | null;
+  alt: string | null;
+  caption: string | null;
+  style: string | null;
+  items: string[] | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Author {
+  name: string;
+  avatar: string;
+}
+
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  slug: string;
+  image: string;
+  isActive: boolean;
+  showCurriculum: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface BlogPost {
+  id: string;
+  userId: string;
+  title: string;
+  slug: string;
+  image: string;
+  shortDescription: string;
+  categories: string[];
+  isActive: boolean;
+  author: Author;
+  createdAt: string;
+  updatedAt: string;
+  sections: BlogSection[];
+  user?: User;
+}
+
+interface ApiResponse {
+  items: BlogPost[];
+  meta: {
+    currentPage: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+// Definición de los artículos del blog que usaremos como respaldo
+const fallbackPosts:BlogPost[] = [];
+
+// Función para formatear fecha
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+  return date.toLocaleDateString('es-ES', options);
+}
+
+// Obtener los posts del blog desde nuestra API
+let blogPosts = [];
+let error = null;
+
+try {
+  const apiBaseUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+  console.log(`Fetching blog posts from: ${apiBaseUrl}/api/blogs?page=1&limit=4`);
+  
+  const response = await fetch(`${apiBaseUrl}/api/blogs?page=1&limit=4`);
+  
+  if (!response.ok) {
+    console.error(`API responded with status: ${response.status}`);
+    throw new Error('Error al obtener los artículos del blog');
   }
-];
+  
+  const data: ApiResponse = await response.json();
+  
+  // Ahora usamos directamente los datos de la API ya que incluyen el autor
+  blogPosts = data.items;
+  
+} catch (err) {
+  console.error('Error al obtener artículos del blog:', err);
+  error = 'No se pudieron cargar los artículos del blog. Usando datos de respaldo.';
+  blogPosts = fallbackPosts;
+}
 ---
 
 <section id="blog" class="py-32">
@@ -47,6 +106,12 @@ const blogPosts = [
       <p class="text-kodeksa-dark/70 text-lg">
         Artículos y recursos sobre tecnología, desarrollo y tendencias del sector.
       </p>
+      
+      {error && (
+        <div class="mt-4 text-yellow-600 bg-yellow-50 p-2 rounded">
+          {error}
+        </div>
+      )}
     </div>
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -54,14 +119,14 @@ const blogPosts = [
         <article class="bg-white rounded-2xl shadow-sm shadow-kodeksa-dark/5 overflow-hidden group flex flex-col h-full">
           <div class="aspect-[16/10] overflow-hidden">
             <img 
-              src={post.image || `/images/blog/default.jpg`} 
+              src={post.image} 
               alt={post.title}
               class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
           <div class="p-6 flex flex-col flex-grow">
             <div class="flex justify-between items-center text-sm text-kodeksa-dark/60 mb-4">
-              <span>{post.date}</span>
+              <span>{formatDate(post.createdAt)}</span>
               <div class="flex gap-1">
                 {post.categories && post.categories.map((category, index) => (
                   <span class="px-3 py-1 bg-kodeksa-dark/5 rounded-full">{category}</span>
@@ -72,21 +137,20 @@ const blogPosts = [
               {post.title}
             </h3>
             <p class="text-kodeksa-dark/70 line-clamp-3 mb-4">
-              {post.excerpt}
+              {post.shortDescription}
             </p>
             <div class="mt-auto pt-4 flex justify-between items-center border-t border-kodeksa-dark/10">
               <div class="flex items-center gap-2">
                 <img 
                   src={post.author.avatar} 
                   alt={post.author.name}
-                  class="w-8 h-8 rounded-full object-cover"
+                  class="w-8 h-8 rounded-full object-contain"
                 />
                 <span class="text-sm text-kodeksa-dark/70">{post.author.name}</span>
               </div>
               <a 
-                href={`#blog-${post.id}`}
-                class="text-kodeksa-primary font-medium flex items-center gap-1 hover:gap-2 transition-all blog-read-more"
-                data-post-id={post.id}
+                href={`/blog/${post.slug}`}
+                class="text-kodeksa-primary font-medium flex items-center gap-1 hover:gap-2 transition-all"
               >
                 Leer más
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -223,371 +287,3 @@ const blogPosts = [
   }
 </style>
 
-<script>
-  // Contenido completo de los artículos
-  const fullArticles = {
-    'tendencias-desarrollo-2025': {
-      title: 'Tendencias de desarrollo web para 2025',
-      date: '24 Marzo, 2025',
-      categories: ['Desarrollo', 'Frontend'], // Múltiples categorías
-      // Contenido sin etiquetas HTML para evitar problemas de sanitización
-      sections: [
-        {
-          type: 'paragraph',
-          content: 'El panorama del desarrollo web evoluciona rápidamente, y 2025 promete traer consigo nuevas tendencias y tecnologías que transformarán la forma en que construimos aplicaciones web. En este artículo, exploraremos las tendencias más importantes que definirán el desarrollo web en el próximo año.'
-        },
-        {
-          type: 'heading',
-          content: '1. WebAssembly se vuelve mainstream'
-        },
-        {
-          type: 'paragraph',
-          content: 'WebAssembly (Wasm) ha estado ganando tracción durante años, pero 2025 será el año en que realmente se convierta en una tecnología mainstream. Los frameworks y bibliotecas están adoptando Wasm para mejorar el rendimiento, permitiendo ejecutar código compilado a velocidades casi nativas directamente en el navegador.'
-        },
-        {
-          type: 'heading',
-          content: '2. Arquitecturas sin servidor (Serverless) dominan'
-        },
-        {
-          type: 'paragraph',
-          content: 'Las arquitecturas serverless seguirán creciendo en popularidad, permitiendo a los desarrolladores centrarse en la lógica de negocio sin preocuparse por la infraestructura subyacente. Veremos más herramientas y frameworks diseñados específicamente para el desarrollo serverless.'
-        },
-        {
-          type: 'heading',
-          content: '3. Micro-frontends ganan adopción'
-        },
-        {
-          type: 'paragraph',
-          content: 'Similar a los microservicios, los micro-frontends permiten a los equipos trabajar de forma independiente en diferentes partes de una aplicación. Esta arquitectura está ganando popularidad en proyectos complejos y de gran escala.'
-        },
-        {
-          type: 'heading',
-          content: '4. Edge Computing se vuelve estándar'
-        },
-        {
-          type: 'paragraph',
-          content: 'Con plataformas como Cloudflare Workers y Vercel Edge Functions, el edge computing está transformando la forma en que se ejecutan las aplicaciones web, permitiendo una menor latencia y mejor experiencia de usuario al ejecutar código más cerca del usuario final.'
-        },
-        {
-          type: 'heading',
-          content: '5. Herramientas de IA para desarrollo'
-        },
-        {
-          type: 'paragraph',
-          content: 'Las herramientas de IA como copilots de código se convertirán en parte esencial del flujo de trabajo de los desarrolladores, aumentando la productividad y ayudando a escribir código más limpio y eficiente.'
-        }
-      ],
-      author: {
-        name: 'Keny Ramírez',
-        avatar: '/images/team/keny-ramirez.png'
-      }
-    },
-    'ia-empresas': {
-      title: 'Cómo implementar IA en empresas medianas',
-      date: '15 Marzo, 2025',
-      categories: ['IA', 'Negocio'], // Múltiples categorías
-      sections: [
-        {
-          type: 'paragraph',
-          content: 'La inteligencia artificial ya no es exclusiva de las grandes corporaciones con presupuestos millonarios. Las empresas medianas ahora tienen acceso a herramientas y soluciones de IA que pueden implementar con recursos limitados. Veamos cómo hacerlo de manera efectiva.'
-        },
-        {
-          type: 'image',
-          src: '/images/blog/ia-dashboard.jpg',
-          alt: 'Dashboard de IA para empresas',
-          caption: 'Un moderno dashboard de IA para análisis de datos empresariales'
-        },
-        {
-          type: 'heading',
-          content: 'Evaluación de necesidades y oportunidades'
-        },
-        {
-          type: 'paragraph',
-          content: 'Antes de implementar soluciones de IA, es crucial identificar las áreas de tu negocio que pueden beneficiarse más. Algunos ejemplos comunes incluyen:'
-        },
-        {
-          type: 'list',
-          style: 'unordered',
-          items: [
-            'Automatización de procesos repetitivos',
-            'Análisis de datos de clientes para mejorar la experiencia',
-            'Optimización de operaciones logísticas',
-            'Mejora de sistemas de atención al cliente'
-          ]
-        },
-        {
-          type: 'heading',
-          content: 'Soluciones de IA accesibles'
-        },
-        {
-          type: 'paragraph',
-          content: 'Existen diversas soluciones de IA disponibles para empresas medianas con diferentes niveles de inversión:'
-        },
-        {
-          type: 'image',
-          src: '/images/blog/ia-solutions.jpg',
-          alt: 'Soluciones de IA para empresas medianas',
-          caption: 'Comparativa de plataformas de IA por costo y funcionalidades'
-        },
-        {
-          type: 'subheading',
-          content: '1. Plataformas SaaS con capacidades de IA'
-        },
-        {
-          type: 'paragraph',
-          content: 'Muchas herramientas de software como servicio ahora incorporan capacidades de IA. Desde CRMs hasta herramientas de marketing, estas plataformas ofrecen funcionalidades de IA sin necesidad de desarrollo personalizado.'
-        },
-        {
-          type: 'subheading',
-          content: '2. APIs de IA'
-        },
-        {
-          type: 'paragraph',
-          content: 'Proveedores como OpenAI, Google y Microsoft ofrecen APIs que permiten integrar capacidades de IA en tus aplicaciones existentes sin tener que construir modelos desde cero.'
-        },
-        {
-          type: 'subheading',
-          content: '3. Soluciones de bajo código'
-        },
-        {
-          type: 'paragraph',
-          content: 'Las plataformas de bajo código con capacidades de IA permiten implementar soluciones personalizadas sin necesidad de un equipo de científicos de datos.'
-        },
-        {
-          type: 'heading',
-          content: 'Implementación gradual'
-        },
-        {
-          type: 'paragraph',
-          content: 'Para empresas medianas, es recomendable implementar la IA de manera gradual:'
-        },
-        {
-          type: 'list',
-          style: 'ordered',
-          items: [
-            'Comienza con un proyecto piloto en un área específica',
-            'Mide los resultados y ajusta según sea necesario',
-            'Expande a otras áreas basándote en el éxito del piloto'
-          ]
-        }
-      ],
-      author: {
-        name: 'Sofía Ferrazano',
-        avatar: '/images/team/sofia-ferrazano.png'
-      }
-    },
-    'optimizacion-cloud': {
-      title: 'Optimización de costos en infraestructura cloud',
-      date: '10 Marzo, 2025',
-      categories: ['Cloud', 'DevOps', 'Finanzas'], // Múltiples categorías
-      sections: [
-        {
-          type: 'paragraph',
-          content: 'A medida que las empresas migran cada vez más a la nube, la optimización de costos se ha convertido en una prioridad. Sin una gestión adecuada, los gastos en la nube pueden escalar rápidamente y superar los presupuestos planificados. Este artículo presenta estrategias prácticas para optimizar costos sin comprometer el rendimiento.'
-        },
-        {
-          type: 'image',
-          src: '/images/blog/cloud-cost-optimization.jpg',
-          alt: 'Dashboard de optimización de costos cloud',
-          caption: 'Dashboard de análisis de costos en AWS mostrando potenciales ahorros'
-        },
-        {
-          type: 'heading',
-          content: '1. Dimensionamiento adecuado de recursos'
-        },
-        {
-          type: 'paragraph',
-          content: 'Uno de los errores más comunes es el sobreaprovisionamiento de recursos. Utiliza herramientas de análisis para identificar instancias subutilizadas y ajusta sus tamaños en consecuencia. La mayoría de los proveedores de nube ofrecen recomendaciones automatizadas para el dimensionamiento.'
-        },
-        {
-          type: 'heading',
-          content: '2. Implementa políticas de escalado automático'
-        },
-        {
-          type: 'paragraph',
-          content: 'Configura el escalado automático para que los recursos se ajusten dinámicamente según la demanda. Esto asegura que solo pagás por lo que realmente necesitas en cada momento, en lugar de aprovisionar para los picos de carga.'
-        },
-        {
-          type: 'heading',
-          content: '3. Utiliza instancias reservadas y planes de compromiso'
-        },
-        {
-          type: 'paragraph',
-          content: 'Para cargas de trabajo predecibles, considera la compra de instancias reservadas o planes de compromiso que ofrecen descuentos significativos en comparación con los precios bajo demanda.'
-        },
-        {
-          type: 'heading',
-          content: '4. Optimiza el almacenamiento'
-        },
-        {
-          type: 'paragraph',
-          content: 'Implementa políticas de ciclo de vida para mover datos menos utilizados a niveles de almacenamiento más económicos. Elimina datos y recursos innecesarios regularmente.'
-        },
-        {
-          type: 'heading',
-          content: '5. Monitoreo y alertas de costos'
-        },
-        {
-          type: 'paragraph',
-          content: 'Configura herramientas de monitoreo y alertas de costos para identificar rápidamente gastos inesperados. La mayoría de los proveedores ofrecen herramientas nativas para esto, como AWS Cost Explorer, Azure Cost Management o Google Cloud Cost Management.'
-        },
-        {
-          type: 'heading',
-          content: '6. Utiliza contenedores y serverless'
-        },
-        {
-          type: 'paragraph',
-          content: 'Las arquitecturas basadas en contenedores y serverless pueden reducir significativamente los costos al permitir una utilización más eficiente de los recursos y eliminar la necesidad de mantener servidores subutilizados.'
-        }
-      ],
-      author: {
-        name: 'Estefany Garcia',
-        avatar: '/images/team/estefany-garcia.png'
-      }
-    }
-  };
-
-  // Función para abrir el modal con el contenido completo del artículo
-  function openBlogPost(postId) {
-    const modal = document.getElementById('blog-modal');
-    const article = fullArticles[postId];
-    
-    if (article) {
-      // Actualizar el contenido del modal con los datos del artículo
-      document.getElementById('modal-title').textContent = article.title;
-      document.getElementById('modal-date').textContent = article.date;
-      
-      // Manejar múltiples categorías
-      const categoriesContainer = document.getElementById('modal-categories');
-      categoriesContainer.innerHTML = '';
-      if (article.categories && article.categories.length > 0) {
-        article.categories.forEach(category => {
-          const categorySpan = document.createElement('span');
-          categorySpan.className = 'px-3 py-1 bg-kodeksa-dark/5 rounded-full';
-          categorySpan.textContent = category;
-          categoriesContainer.appendChild(categorySpan);
-        });
-      }
-      
-      // Generar el contenido HTML a partir de las secciones estructuradas
-      const modalContent = document.getElementById('modal-content');
-      if (modalContent && article.sections) {
-        // Limpiar el contenido anterior
-        modalContent.innerHTML = '';
-        
-        // Construir el contenido dinámicamente
-        article.sections.forEach(section => {
-          switch(section.type) {
-            case 'paragraph':
-              const p = document.createElement('p');
-              p.textContent = section.content;
-              modalContent.appendChild(p);
-              break;
-              
-            case 'heading':
-              const h3 = document.createElement('h3');
-              h3.textContent = section.content;
-              h3.className = 'text-xl font-bold mt-6 mb-3';
-              modalContent.appendChild(h3);
-              break;
-              
-            case 'subheading':
-              const h4 = document.createElement('h4');
-              h4.textContent = section.content;
-              h4.className = 'text-lg font-bold mt-4 mb-2';
-              modalContent.appendChild(h4);
-              break;
-              
-            case 'image':
-              const imgContainer = document.createElement('div');
-              imgContainer.className = 'my-6';
-              
-              const img = document.createElement('img');
-              img.src = section.src;
-              img.alt = section.alt || '';
-              img.className = 'rounded-lg w-full';
-              
-              imgContainer.appendChild(img);
-              
-              // Agregar caption si existe
-              if (section.caption) {
-                const caption = document.createElement('p');
-                caption.className = 'text-sm text-center text-kodeksa-dark/60 mt-2';
-                caption.textContent = section.caption;
-                imgContainer.appendChild(caption);
-              }
-              
-              modalContent.appendChild(imgContainer);
-              break;
-              
-            case 'list':
-              const list = document.createElement(section.style === 'ordered' ? 'ol' : 'ul');
-              list.className = section.style === 'ordered' ? 'list-decimal ml-6 mb-4' : 'list-disc ml-6 mb-4';
-              
-              section.items.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item;
-                li.className = 'mb-1';
-                list.appendChild(li);
-              });
-              
-              modalContent.appendChild(list);
-              break;
-          }
-        });
-      }
-      
-      document.getElementById('modal-author-name').textContent = article.author.name;
-      document.getElementById('modal-author-avatar').src = article.author.avatar;
-      document.getElementById('modal-author-avatar').alt = article.author.name;
-      
-      // Mostrar el modal
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden'; // Prevenir scroll en el body
-    }
-  }
-  
-  // Función para cerrar el modal
-  function closeBlogModal() {
-    const modal = document.getElementById('blog-modal');
-    modal.classList.add('hidden');
-    document.body.style.overflow = ''; // Restaurar scroll
-  }
-
-  // Configurar todos los event listeners cuando el DOM esté cargado
-  document.addEventListener('DOMContentLoaded', () => {
-    // 1. Agregar event listeners a los enlaces "Leer más"
-    document.querySelectorAll('.blog-read-more').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const postId = link.getAttribute('data-post-id');
-        openBlogPost(postId);
-      });
-    });
-
-    // 2. Configurar el botón de cierre del modal
-    const closeButton = document.getElementById('close-blog-button');
-    if (closeButton) {
-      closeButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation(); // Evitar que el evento llegue al fondo del modal
-        closeBlogModal();
-      });
-    }
-
-    // 3. Cerrar modal al hacer clic en el fondo
-    const modal = document.getElementById('blog-modal');
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        // Solo cerrar si el clic fue directamente en el fondo del modal
-        if (e.target === modal) {
-          closeBlogModal();
-        }
-      });
-    }
-    
-    // Exponer las funciones al objeto window para que sean accesibles globalmente
-    window.openBlogPost = openBlogPost;
-    window.closeBlogModal = closeBlogModal;
-  });
-</script>

@@ -3,367 +3,131 @@ import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 
-// Datos de los artículos (puedes moverlos a un archivo separado)
-export const fullArticles = {
-    'tendencias-desarrollo-2025': {
-      title: 'Tendencias de desarrollo web para 2025',
-      date: '24 Marzo, 2025',
-      categories: ['Desarrollo', 'Frontend'], // Múltiples categorías
-      // Contenido sin etiquetas HTML para evitar problemas de sanitización
-      sections: [
-        {
-          type: 'paragraph',
-          content: 'El panorama del desarrollo web evoluciona rápidamente, y 2025 promete traer consigo nuevas tendencias y tecnologías que transformarán la forma en que construimos aplicaciones web. En este artículo, exploraremos las tendencias más importantes que definirán el desarrollo web en el próximo año.'
-        },
-        {
-          type: 'heading',
-          content: '1. WebAssembly se vuelve mainstream'
-        },
-        {
-          type: 'paragraph',
-          content: 'WebAssembly (Wasm) ha estado ganando tracción durante años, pero 2025 será el año en que realmente se convierta en una tecnología mainstream. Los frameworks y bibliotecas están adoptando Wasm para mejorar el rendimiento, permitiendo ejecutar código compilado a velocidades casi nativas directamente en el navegador.'
-        },
-        {
-          type: 'heading',
-          content: '2. Arquitecturas sin servidor (Serverless) dominan'
-        },
-        {
-          type: 'paragraph',
-          content: 'Las arquitecturas serverless seguirán creciendo en popularidad, permitiendo a los desarrolladores centrarse en la lógica de negocio sin preocuparse por la infraestructura subyacente. Veremos más herramientas y frameworks diseñados específicamente para el desarrollo serverless.'
-        },
-        {
-          type: 'heading',
-          content: '3. Micro-frontends ganan adopción'
-        },
-        {
-          type: 'paragraph',
-          content: 'Similar a los microservicios, los micro-frontends permiten a los equipos trabajar de forma independiente en diferentes partes de una aplicación. Esta arquitectura está ganando popularidad en proyectos complejos y de gran escala.'
-        },
-        {
-          type: 'heading',
-          content: '4. Edge Computing se vuelve estándar'
-        },
-        {
-          type: 'paragraph',
-          content: 'Con plataformas como Cloudflare Workers y Vercel Edge Functions, el edge computing está transformando la forma en que se ejecutan las aplicaciones web, permitiendo una menor latencia y mejor experiencia de usuario al ejecutar código más cerca del usuario final.'
-        },
-        {
-          type: 'heading',
-          content: '5. Herramientas de IA para desarrollo'
-        },
-        {
-          type: 'paragraph',
-          content: 'Las herramientas de IA como copilots de código se convertirán en parte esencial del flujo de trabajo de los desarrolladores, aumentando la productividad y ayudando a escribir código más limpio y eficiente.'
-        }
-      ],
-      author: {
-        name: 'Keny Ramírez',
-        avatar: '/images/team/keny-ramirez.png'
-      }
-    },
-    'ia-empresas': {
-      title: 'Cómo implementar IA en empresas medianas',
-      date: '15 Marzo, 2025',
-      categories: ['IA', 'Negocio'], // Múltiples categorías
-      sections: [
-        {
-          type: 'paragraph',
-          content: 'La inteligencia artificial ya no es exclusiva de las grandes corporaciones con presupuestos millonarios. Las empresas medianas ahora tienen acceso a herramientas y soluciones de IA que pueden implementar con recursos limitados. Veamos cómo hacerlo de manera efectiva.'
-        },
-        {
-          type: 'image',
-          src: '/images/blog/ia-dashboard.jpg',
-          alt: 'Dashboard de IA para empresas',
-          caption: 'Un moderno dashboard de IA para análisis de datos empresariales'
-        },
-        {
-          type: 'heading',
-          content: 'Evaluación de necesidades y oportunidades'
-        },
-        {
-          type: 'paragraph',
-          content: 'Antes de implementar soluciones de IA, es crucial identificar las áreas de tu negocio que pueden beneficiarse más. Algunos ejemplos comunes incluyen:'
-        },
-        {
-          type: 'list',
-          style: 'unordered',
-          items: [
-            'Automatización de procesos repetitivos',
-            'Análisis de datos de clientes para mejorar la experiencia',
-            'Optimización de operaciones logísticas',
-            'Mejora de sistemas de atención al cliente'
-          ]
-        },
-        {
-          type: 'heading',
-          content: 'Soluciones de IA accesibles'
-        },
-        {
-          type: 'paragraph',
-          content: 'Existen diversas soluciones de IA disponibles para empresas medianas con diferentes niveles de inversión:'
-        },
-        {
-          type: 'image',
-          src: '/images/blog/ia-solutions.jpg',
-          alt: 'Soluciones de IA para empresas medianas',
-          caption: 'Comparativa de plataformas de IA por costo y funcionalidades'
-        },
-        {
-          type: 'subheading',
-          content: '1. Plataformas SaaS con capacidades de IA'
-        },
-        {
-          type: 'paragraph',
-          content: 'Muchas herramientas de software como servicio ahora incorporan capacidades de IA. Desde CRMs hasta herramientas de marketing, estas plataformas ofrecen funcionalidades de IA sin necesidad de desarrollo personalizado.'
-        },
-        {
-          type: 'subheading',
-          content: '2. APIs de IA'
-        },
-        {
-          type: 'paragraph',
-          content: 'Proveedores como OpenAI, Google y Microsoft ofrecen APIs que permiten integrar capacidades de IA en tus aplicaciones existentes sin tener que construir modelos desde cero.'
-        },
-        {
-          type: 'subheading',
-          content: '3. Soluciones de bajo código'
-        },
-        {
-          type: 'paragraph',
-          content: 'Las plataformas de bajo código con capacidades de IA permiten implementar soluciones personalizadas sin necesidad de un equipo de científicos de datos.'
-        },
-        {
-          type: 'heading',
-          content: 'Implementación gradual'
-        },
-        {
-          type: 'paragraph',
-          content: 'Para empresas medianas, es recomendable implementar la IA de manera gradual:'
-        },
-        {
-          type: 'list',
-          style: 'ordered',
-          items: [
-            'Comienza con un proyecto piloto en un área específica',
-            'Mide los resultados y ajusta según sea necesario',
-            'Expande a otras áreas basándote en el éxito del piloto'
-          ]
-        }
-      ],
-      author: {
-        name: 'Sofía Ferrazano',
-        avatar: '/images/team/sofia-ferrazano.png'
-      }
-    },
-    'optimizacion-cloud': {
-      title: 'Optimización de costos en infraestructura cloud',
-      date: '10 Marzo, 2025',
-      categories: ['Cloud', 'DevOps', 'Finanzas'], // Múltiples categorías
-      sections: [
-        {
-          type: 'paragraph',
-          content: 'A medida que las empresas migran cada vez más a la nube, la optimización de costos se ha convertido en una prioridad. Sin una gestión adecuada, los gastos en la nube pueden escalar rápidamente y superar los presupuestos planificados. Este artículo presenta estrategias prácticas para optimizar costos sin comprometer el rendimiento.'
-        },
-        {
-          type: 'image',
-          src: '/images/blog/cloud-cost-optimization.jpg',
-          alt: 'Dashboard de optimización de costos cloud',
-          caption: 'Dashboard de análisis de costos en AWS mostrando potenciales ahorros'
-        },
-        {
-          type: 'heading',
-          content: '1. Dimensionamiento adecuado de recursos'
-        },
-        {
-          type: 'paragraph',
-          content: 'Uno de los errores más comunes es el sobreaprovisionamiento de recursos. Utiliza herramientas de análisis para identificar instancias subutilizadas y ajusta sus tamaños en consecuencia. La mayoría de los proveedores de nube ofrecen recomendaciones automatizadas para el dimensionamiento.'
-        },
-        {
-          type: 'heading',
-          content: '2. Implementa políticas de escalado automático'
-        },
-        {
-          type: 'paragraph',
-          content: 'Configura el escalado automático para que los recursos se ajusten dinámicamente según la demanda. Esto asegura que solo pagás por lo que realmente necesitas en cada momento, en lugar de aprovisionar para los picos de carga.'
-        },
-        {
-          type: 'heading',
-          content: '3. Utiliza instancias reservadas y planes de compromiso'
-        },
-        {
-          type: 'paragraph',
-          content: 'Para cargas de trabajo predecibles, considera la compra de instancias reservadas o planes de compromiso que ofrecen descuentos significativos en comparación con los precios bajo demanda.'
-        },
-        {
-          type: 'heading',
-          content: '4. Optimiza el almacenamiento'
-        },
-        {
-          type: 'paragraph',
-          content: 'Implementa políticas de ciclo de vida para mover datos menos utilizados a niveles de almacenamiento más económicos. Elimina datos y recursos innecesarios regularmente.'
-        },
-        {
-          type: 'heading',
-          content: '5. Monitoreo y alertas de costos'
-        },
-        {
-          type: 'paragraph',
-          content: 'Configura herramientas de monitoreo y alertas de costos para identificar rápidamente gastos inesperados. La mayoría de los proveedores ofrecen herramientas nativas para esto, como AWS Cost Explorer, Azure Cost Management o Google Cloud Cost Management.'
-        },
-        {
-          type: 'heading',
-          content: '6. Utiliza contenedores y serverless'
-        },
-        {
-          type: 'paragraph',
-          content: 'Las arquitecturas basadas en contenedores y serverless pueden reducir significativamente los costos al permitir una utilización más eficiente de los recursos y eliminar la necesidad de mantener servidores subutilizados.'
-        }
-      ],
-      author: {
-        name: 'Estefany Garcia',
-        avatar: '/images/team/estefany-garcia.png'
-      }
-    },
-    'mejores-practicas-apis': {
-        title: 'Mejores prácticas para diseñar APIs RESTful',
-        date: '5 Marzo, 2025',
-        categories: ['Desarrollo', 'Backend'],
-        id: 'mejores-practicas-apis',
-        image: '/images/blog/api-design.jpg',
-        author: {
-            name: 'Keny Ramírez',
-            avatar: '/images/team/keny-ramirez.png'
-        },
-        sections: [
-            {
-                type: 'paragraph',
-                content: 'Diseñar APIs RESTful efectivas es crucial para crear servicios web escalables, mantenibles y fáciles de usar. En este artículo, exploraremos los principios fundamentales y las mejores prácticas para el diseño de APIs.'
-            },
-            {
-                type: 'heading',
-                content: '1. Usa verbos HTTP semánticos'
-            },
-            {
-                type: 'paragraph',
-                content: 'Cada verbo HTTP debe usarse para su propósito específico: GET para recuperar recursos, POST para crear, PUT para actualizar completamente, PATCH para actualizaciones parciales, y DELETE para eliminar.'
-            },
-            {
-                type: 'list',
-                style: 'unordered',
-                items: [
-                    'GET /usuarios - Listar usuarios',
-                    'POST /usuarios - Crear un nuevo usuario',
-                    'PUT /usuarios/{id} - Actualizar usuario completo',
-                    'PATCH /usuarios/{id} - Actualizar datos parciales',
-                    'DELETE /usuarios/{id} - Eliminar usuario'
-                ]
-            }
-        ]
-    },
-    'marketing-digital-2025': {
-        title: 'Estrategias de marketing digital para 2025',
-        date: '28 Febrero, 2025',
-        categories: ['Marketing'],
-        id: 'marketing-digital-2025',
-        image: '/images/blog/digital-marketing.jpg',
-        author: {
-            name: 'Ricardo Badtke',
-            avatar: '/images/team/ricardo-badtke.png'
-        },
-        sections: [
-            {
-                type: 'paragraph',
-                content: 'El marketing digital continúa evolucionando a un ritmo vertiginoso. Para mantenerse competitivo en 2025, es fundamental comprender y adoptar las últimas tendencias y estrategias emergentes.'
-            },
-            {
-                type: 'heading',
-                content: '1. Personalización impulsada por IA'
-            },
-            {
-                type: 'paragraph',
-                content: 'La inteligencia artificial está transformando la personalización del marketing. Las herramientas de IA pueden analizar comportamientos de usuario con una profundidad sin precedentes, permitiendo crear experiencias de marketing hiperPersonalizadas.'
-            },
-            {
-                type: 'heading',
-                content: '2. Marketing de contenidos interactivos'
-            },
-            {
-                type: 'paragraph',
-                content: 'Los contenidos estáticos están siendo reemplazados por experiencias interactivas. Desde cuestionarios y calculadoras hasta contenido personalizable, los usuarios buscan engagement más profundo.'
-            }
-        ]
-    },
-    'devops-prácticas': {
-        title: 'DevOps: prácticas esenciales para equipos de desarrollo',
-        date: '20 Febrero, 2025',
-        categories: ['DevOps'],
-        id: 'devops-prácticas',
-        image: '/images/blog/devops.jpg',
-        author: {
-            name: 'Estefany Garcia',
-            avatar: '/images/team/estefany-garcia.png'
-        },
-        sections: [
-            {
-                type: 'paragraph',
-                content: 'DevOps no es simplemente una metodología, es una cultura que busca eliminar barreras entre desarrollo y operaciones. En este artículo, exploraremos las prácticas fundamentales para implementar DevOps de manera efectiva.'
-            },
-            {
-                type: 'heading',
-                content: '1. Integración Continua (CI)'
-            },
-            {
-                type: 'paragraph',
-                content: 'La integración continua implica combinar cambios de código de los desarrolladores en un repositorio central varias veces al día. Cada integración se verifica mediante compilaciones y pruebas automatizadas.'
-            },
-            {
-                type: 'heading',
-                content: '2. Entrega Continua (CD)'
-            },
-            {
-                type: 'paragraph',
-                content: 'La entrega continua va un paso más allá de la integración continua, automatizando el despliegue de aplicaciones a entornos de prueba o producción de manera segura y repetible.'
-            }
-        ]
-    }
-};
+// Interfaces para la respuesta de la API
+interface BlogSection {
+  id: string;
+  blogId: string;
+  order: number;
+  type: 'paragraph' | 'heading' | 'subheading' | 'image' | 'list';
+  content: string | null;
+  src: string | null;
+  alt: string | null;
+  caption: string | null;
+  style: string | null;
+  items: string[] | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Author {
+  name: string;
+  avatar: string;
+  role: string;
+}
+
+interface BlogPost {
+  id: string;
+  userId: string;
+  title: string;
+  slug: string;
+  image: string;
+  shortDescription: string;
+  categories: string[];
+  isActive: boolean;
+  author: Author;
+  createdAt: string;
+  updatedAt: string;
+  sections: BlogSection[];
+}
+
+// Función para formatear fecha
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+  return date.toLocaleDateString('es-ES', options);
+}
 
 // Función para generar rutas estáticas
-export function getStaticPaths() {
-  return Object.keys(fullArticles).map(slug => ({
-    params: { slug },
-    props: { article: fullArticles[slug] }
+export async function getStaticPaths() {
+  let blogPosts = [];
+  
+  try {
+    const apiBaseUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiBaseUrl}/api/blogs?page=1&limit=100`);
+    
+    if (!response.ok) {
+      throw new Error('Error al obtener los artículos del blog');
+    }
+    
+    const data = await response.json();
+    blogPosts = data.items;
+    
+  } catch (err) {
+    console.error('Error al obtener artículos del blog para las rutas estáticas:', err);
+    // Usar datos de respaldo para generar algunas rutas
+    blogPosts = [
+      { slug: 'tendencias-de-desarrollo-web-para-2025' },
+      { slug: 'cmo-implementar-ia-en-empresas-medianas' },
+      { slug: 'optimizacion-de-costos-en-infraestructura-cloud' }
+    ];
+  }
+  
+  return blogPosts.map((post: { slug: any; }) => ({
+    params: { slug: post.slug },
+    props: { slug: post.slug }
   }));
 }
 
-// Recibir los datos del artículo como props
-const { article } = Astro.props;
+const { slug } = Astro.params;
 
-// Función para renderizar diferentes tipos de secciones
-function renderSection(section) {
+// Obtener los detalles del post desde la API
+let post: BlogPost | null = null;
+let error = null;
+
+try {
+  const apiBaseUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+  console.log(`Fetching blog post details from: ${apiBaseUrl}/api/blogs/slug/${slug}`);
+  
+  const response = await fetch(`${apiBaseUrl}/api/blogs/slug/${slug}`);
+  
+  if (!response.ok) {
+    throw new Error(`Error al obtener el artículo con slug: ${slug}`);
+  }
+  
+  post = await response.json();
+  
+} catch (err) {
+  console.error(`Error al obtener el artículo con slug: ${slug}`, err);
+  error = 'No se pudo cargar el artículo solicitado.';
+}
+
+// Función para renderizar un tipo de sección específico
+function renderSection(section: BlogSection) {
   switch(section.type) {
     case 'paragraph':
       return `<p>${section.content}</p>`;
     case 'heading':
-      return `<h3 class="text-2xl font-bold mt-6 mb-4">${section.content}</h3>`;
+      return `<h2 class="text-2xl font-bold my-6">${section.content}</h2>`;
     case 'subheading':
-      return `<h4 class="text-xl font-semibold mt-4 mb-3">${section.content}</h4>`;
+      return `<h3 class="text-xl font-semibold my-4">${section.content}</h3>`;
     case 'image':
       return `
-        <div class="my-6">
+        <figure class="my-8">
           <img 
             src="${section.src}" 
             alt="${section.alt || ''}" 
-            class="rounded-lg w-full max-h-[500px] object-cover"
+            class="w-full rounded-lg"
           />
-          ${section.caption ? `<p class="text-sm text-center text-kodeksa-dark/60 mt-2">${section.caption}</p>` : ''}
-        </div>
+          ${section.caption ? `<figcaption class="text-center text-sm text-kodeksa-dark/60 mt-2">${section.caption}</figcaption>` : ''}
+        </figure>
       `;
     case 'list':
+      if (!section.items) return '';
       const listType = section.style === 'ordered' ? 'ol' : 'ul';
       const listItems = section.items.map(item => `<li class="mb-2">${item}</li>`).join('');
+      const listClass = section.style === 'ordered' ? 'list-decimal' : 'list-disc';
       return `
-        <${listType} class="${section.style === 'ordered' ? 'list-decimal' : 'list-disc'} ml-6 mb-4">
+        <${listType} class="${listClass} ml-6 my-4">
           ${listItems}
         </${listType}>
       `;
@@ -372,107 +136,134 @@ function renderSection(section) {
   }
 }
 
-// Convertir secciones a HTML
-const articleContent = article.sections.map(renderSection).join('');
+// Si tenemos el post, ordenamos las secciones por el campo 'order'
+let orderedSections: BlogSection[] = [];
+if (post && post.sections) {
+  orderedSections = [...post.sections].sort((a, b) => a.order - b.order);
+}
+
+// Título para la página
+const pageTitle = post ? `${post.title} - Kodeksa Blog` : 'Artículo no encontrado - Kodeksa Blog';
+const description = post ? post.shortDescription : 'Artículo no encontrado';
 ---
 
-<Layout title={`${article.title} - Kodeksa Blog`} description={article.title}>
+<Layout title={pageTitle} description={description}>
   <Navbar />
   
   <main class="pt-32 pb-20">
     <div class="container mx-auto px-6">
-      <div class="max-w-3xl mx-auto">
-        <!-- Hero del artículo -->
-        <div class="mb-8">
-          <div class="flex items-center gap-4 text-sm text-kodeksa-dark/60 mb-4">
-            <span>{article.date}</span>
-            {article.categories && article.categories.map(category => (
-              <span class="px-3 py-1 bg-kodeksa-dark/5 rounded-full">{category}</span>
-            ))}
-          </div>
-          <h1 class="text-4xl md:text-5xl font-display font-bold text-kodeksa-dark mb-8">
-            {article.title}
-          </h1>
-          <div class="flex items-center gap-4 mb-12">
-            <img 
-              src={article.author.avatar} 
-              alt={article.author.name}
-              class="w-12 h-12 rounded-full object-cover"
-            />
-            <div>
-              <div class="font-bold text-kodeksa-dark">{article.author.name}</div>
-              <div class="text-sm text-kodeksa-dark/70">Autor</div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Imagen destacada -->
-        {article.image && (
-          <div class="aspect-video rounded-xl overflow-hidden mb-12">
-            <img 
-              src={article.image} 
-              alt={article.title}
-              class="w-full h-full object-cover"
-            />
-          </div>
-        )}
-        
-        <!-- Contenido del artículo -->
-        <article class="prose prose-lg max-w-none prose-kodeksa">
-          <Fragment set:html={articleContent} />
-        </article>
-        
-        <!-- Enlaces para compartir -->
-        <div class="mt-12 pt-8 border-t border-kodeksa-dark/10">
-          <h3 class="font-bold text-kodeksa-dark mb-4">Compartir este artículo</h3>
-          <div class="flex gap-4">
-            <a 
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(`https://kodeksa.com/blog/${article.id}`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="p-3 rounded-full bg-kodeksa-dark/5 text-kodeksa-dark hover:bg-kodeksa-primary hover:text-white transition-colors"
-              aria-label="Compartir en Twitter"
-            >
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-              </svg>
-            </a>
-            <a 
-              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://kodeksa.com/blog/${article.id}`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="p-3 rounded-full bg-kodeksa-dark/5 text-kodeksa-dark hover:bg-kodeksa-primary hover:text-white transition-colors"
-              aria-label="Compartir en LinkedIn"
-            >
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                <rect x="2" y="9" width="4" height="12"></rect>
-                <circle cx="4" cy="4" r="2"></circle>
-              </svg>
-            </a>
-            <a 
-              href={`mailto:?subject=${encodeURIComponent(article.title)}&body=${encodeURIComponent(`Te recomiendo este artículo de Kodeksa: https://kodeksa.com/blog/${article.id}`)}`}
-              class="p-3 rounded-full bg-kodeksa-dark/5 text-kodeksa-dark hover:bg-kodeksa-primary hover:text-white transition-colors"
-              aria-label="Compartir por email"
-            >
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-              </svg>
-            </a>
-          </div>
-        </div>
-        
-        <!-- Navegación a otros artículos -->
-        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <a href="/blog" class="flex items-center gap-2 text-kodeksa-dark hover:text-kodeksa-primary transition-colors">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m15 18-6-6 6-6"></path>
-            </svg>
+      {error ? (
+        <div class="max-w-3xl mx-auto text-center py-16">
+          <h1 class="text-3xl font-bold text-kodeksa-dark mb-4">Artículo no encontrado</h1>
+          <p class="text-kodeksa-dark/70 mb-8">{error}</p>
+          <a href="/blog/all" class="inline-flex items-center px-6 py-3 bg-kodeksa-primary text-white rounded-full">
             Volver al blog
           </a>
         </div>
-      </div>
+      ) : (
+        <div class="max-w-3xl mx-auto">
+          {post && (
+            <>
+              <!-- Encabezado del artículo -->
+              <div class="mb-8">
+                <div class="flex items-center gap-4 text-sm text-kodeksa-dark/60 mb-4">
+                  <span>{formatDate(post.createdAt)}</span>
+                  {post.categories && post.categories.map(category => (
+                    <span class="px-3 py-1 bg-kodeksa-dark/5 rounded-full">{category}</span>
+                  ))}
+                </div>
+                <h1 class="text-4xl md:text-5xl font-display font-bold text-kodeksa-dark mb-8">
+                  {post.title}
+                </h1>
+                <div class="flex items-center gap-4 mb-12">
+                  <img 
+                    src={post.author?.avatar ?? '/images/team/default-avatar.png'}
+                    alt={post.author?.name ?? 'Autor Desconocido'}
+                    class="w-12 h-12 rounded-full object-contain"
+                  />
+                  <div>
+                    <div class="font-bold text-kodeksa-dark">
+                      {post.author?.name ?? 'Autor Desconocido'}
+                    </div>
+                    <div class="text-sm text-kodeksa-dark/70">
+                      {post.author?.role || 'Autor'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Imagen principal -->
+              {post.image && (
+                <div class="aspect-video rounded-xl overflow-hidden mb-12">
+                  <img 
+                    src={post.image} 
+                    alt={post.title}
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              
+              <!-- Contenido del artículo -->
+              <article class="prose prose-lg max-w-none prose-kodeksa mb-12">
+                {orderedSections.map(section => (
+                  <Fragment set:html={renderSection(section)} />
+                ))}
+              </article>
+              
+              <!-- Enlaces para compartir -->
+              <div class="mt-12 pt-8 border-t border-kodeksa-dark/10">
+                <h3 class="font-bold text-kodeksa-dark mb-4">Compartir este artículo</h3>
+                <div class="flex gap-4">
+                  <a 
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://kodeksa.com/blog/${post.slug}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="p-3 rounded-full bg-kodeksa-dark/5 text-kodeksa-dark hover:bg-kodeksa-primary hover:text-white transition-colors"
+                    aria-label="Compartir en Twitter"
+                  >
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+                    </svg>
+                  </a>
+                  <a 
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://kodeksa.com/blog/${post.slug}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="p-3 rounded-full bg-kodeksa-dark/5 text-kodeksa-dark hover:bg-kodeksa-primary hover:text-white transition-colors"
+                    aria-label="Compartir en LinkedIn"
+                  >
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                      <rect x="2" y="9" width="4" height="12"></rect>
+                      <circle cx="4" cy="4" r="2"></circle>
+                    </svg>
+                  </a>
+                  <a 
+                    href={`mailto:?subject=${encodeURIComponent(post.title)}&body=${encodeURIComponent(`Te recomiendo este artículo de Kodeksa: https://kodeksa.com/blog/${post.slug}`)}`}
+                    class="p-3 rounded-full bg-kodeksa-dark/5 text-kodeksa-dark hover:bg-kodeksa-primary hover:text-white transition-colors"
+                    aria-label="Compartir por email"
+                  >
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              
+              <!-- Navegación a otros artículos -->
+              <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <a href="/blog/all" class="flex items-center gap-2 text-kodeksa-dark hover:text-kodeksa-primary transition-colors">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 18-6-6 6-6"></path>
+                  </svg>
+                  Volver al blog
+                </a>
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   </main>
   
@@ -481,7 +272,7 @@ const articleContent = article.sections.map(renderSection).join('');
 
 <style>
   /* Estilos para el contenido del artículo */
-  .prose-kodeksa h3 {
+  .prose-kodeksa h2 {
     color: var(--color-kodeksa-dark);
     font-weight: bold;
     margin-top: 2rem;
@@ -489,7 +280,7 @@ const articleContent = article.sections.map(renderSection).join('');
     font-size: 1.5rem;
   }
   
-  .prose-kodeksa h4 {
+  .prose-kodeksa h3 {
     color: var(--color-kodeksa-dark);
     font-weight: bold;
     margin-top: 1.5rem;
@@ -520,5 +311,17 @@ const articleContent = article.sections.map(renderSection).join('');
   
   .prose-kodeksa ol li {
     list-style-type: decimal;
+  }
+  
+  .prose-kodeksa img {
+    border-radius: 0.5rem;
+    margin: 2rem 0;
+  }
+  
+  .prose-kodeksa figure figcaption {
+    text-align: center;
+    font-size: 0.875rem;
+    color: rgba(21, 21, 21, 0.6);
+    margin-top: 0.5rem;
   }
 </style>

@@ -3,86 +3,110 @@ import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 
-// Simulando datos de blog que normalmente vendrían de un CMS
-const allPosts = [
-  {
-    id: 'tendencias-desarrollo-2025',
-    title: 'Tendencias de desarrollo web para 2025',
-    excerpt: 'Descubre qué tecnologías y prácticas definirán el desarrollo web en el próximo año.',
-    date: '24 Marzo, 2025',
-    categories: ['Desarrollo', 'Frontend'],
-    image: '/images/blog/tendencias-desarrollo.jpg',
-    author: {
-      name: 'Keny Ramírez',
-      avatar: '/images/team/keny-ramirez.png'
-    }
-  },
-  {
-    id: 'ia-empresas',
-    title: 'Cómo implementar IA en empresas medianas',
-    excerpt: 'Una guía práctica para incorporar inteligencia artificial en empresas sin un gran presupuesto.',
-    date: '15 Marzo, 2025',
-    categories: ['IA', 'Negocio'],
-    image: '/images/blog/ia-empresas.jpg',
-    author: {
-      name: 'Sofía Ferrazano',
-      avatar: '/images/team/sofia-ferrazano.png'
-    }
-  },
-  {
-    id: 'optimizacion-cloud',
-    title: 'Optimización de costos en infraestructura cloud',
-    excerpt: 'Estrategias efectivas para reducir costos sin sacrificar rendimiento en tus servicios cloud.',
-    date: '10 Marzo, 2025',
-    categories: ['Cloud', 'DevOps', 'Finanzas'],
-    image: '/images/blog/cloud-costos.jpg',
-    author: {
-      name: 'Estefany Garcia',
-      avatar: '/images/team/estefany-garcia.png'
-    }
-  },
-  {
-    id: 'mejores-practicas-apis',
-    title: 'Mejores prácticas para diseñar APIs RESTful',
-    excerpt: 'Principios de diseño y patrones recomendados para crear APIs RESTful consistentes y fáciles de usar.',
-    date: '5 Marzo, 2025',
-    categories: ['Desarrollo', 'Backend'],
-    image: '/images/blog/api-design.jpg',
-    author: {
-      name: 'Keny Ramírez',
-      avatar: '/images/team/keny-ramirez.png'
-    }
-  },
-  {
-    id: 'marketing-digital-2025',
-    title: 'Estrategias de marketing digital para 2025',
-    excerpt: 'Las tendencias más importantes en marketing digital que definirán el éxito de las campañas este año.',
-    date: '28 Febrero, 2025',
-    categories: ['Marketing'],
-    image: '/images/blog/digital-marketing.jpg',
-    author: {
-      name: 'Ricardo Badtke',
-      avatar: '/images/team/ricardo-badtke.png'
-    }
-  },
-  {
-    id: 'devops-prácticas',
-    title: 'DevOps: prácticas esenciales para equipos de desarrollo',
-    excerpt: 'Cómo implementar DevOps efectivamente en tu organización para mejorar la colaboración y productividad.',
-    date: '20 Febrero, 2025',
-    categories: ['DevOps'],
-    image: '/images/blog/devops.jpg',
-    author: {
-      name: 'Estefany Garcia',
-      avatar: '/images/team/estefany-garcia.png'
-    }
-  }
-];
+// Interfaces para la respuesta de la API
+interface BlogSection {
+  id: string;
+  blogId: string;
+  order: number;
+  type: 'paragraph' | 'heading' | 'subheading' | 'image' | 'list';
+  content: string | null;
+  src: string | null;
+  alt: string | null;
+  caption: string | null;
+  style: string | null;
+  items: string[] | null;
+  createdAt: string;
+  updatedAt: string;
+}
 
-// Extraer todas las categorías únicas de los artículos
-const allCategories = [...new Set(allPosts.flatMap(post => post.categories))];
-// Agregar la categoría "Todos" al principio
-const categories = ['Todos', ...allCategories].sort((a, b) => a === 'Todos' ? -1 : b === 'Todos' ? 1 : a.localeCompare(b));
+interface Author {
+  name: string;
+  avatar: string;
+  role: string;
+}
+
+
+
+interface BlogPost {
+  id: string;
+  userId: string;
+  title: string;
+  slug: string;
+  image: string;
+  shortDescription: string;
+  categories: string[];
+  isActive: boolean;
+  author: Author;
+  createdAt: string;
+  updatedAt: string;
+  sections?: BlogSection[];
+}
+
+interface ApiResponse {
+  items: BlogPost[];
+  meta: {
+    currentPage: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+// Función para formatear fecha
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+  return date.toLocaleDateString('es-ES', options);
+}
+
+// Obtener los posts del blog desde la API
+let blogPosts: BlogPost[] = [];
+let categories: string[] = ['Todos'];
+let pagination = {
+  currentPage: 1,
+  totalPages: 1,
+  hasNextPage: false,
+  hasPreviousPage: false
+};
+let error = null;
+
+try {
+  const apiBaseUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+  console.log(`Fetching blog posts from: ${apiBaseUrl}/api/blogs?page=1&limit=10&includeSections=true`);
+  
+  const response = await fetch(`${apiBaseUrl}/api/blogs?page=1&limit=10&includeSections=true`);
+  
+  if (!response.ok) {
+    throw new Error('Error al obtener los artículos del blog');
+  }
+  
+  const data: ApiResponse = await response.json();
+  
+  blogPosts = data.items;
+  pagination = {
+    currentPage: data.meta.currentPage,
+    totalPages: data.meta.totalPages,
+    hasNextPage: data.meta.hasNextPage,
+    hasPreviousPage: data.meta.hasPreviousPage
+  };
+  
+  // Extraer categorías únicas de todos los posts
+  const allCategories = [...new Set(blogPosts.flatMap(post => post.categories || []))];
+  categories = ['Todos', ...allCategories.sort()];
+  
+} catch (err) {
+  console.error('Error al obtener artículos del blog:', err);
+  error = 'No se pudieron cargar los artículos del blog.';
+  
+  // Datos de respaldo en caso de error
+  blogPosts = [];
+  
+  // Extraer categorías únicas de los posts de respaldo
+  const allCategories = [...new Set(blogPosts.flatMap(post => post.categories || []))];
+  categories = ['Todos', ...allCategories.sort()];
+}
 ---
 
 <Layout title="Blog - Kodeksa" description="Artículos y recursos sobre tecnología, desarrollo y tendencias del sector.">
@@ -95,6 +119,12 @@ const categories = ['Todos', ...allCategories].sort((a, b) => a === 'Todos' ? -1
         <p class="text-kodeksa-dark/70 text-xl">
           Artículos y recursos sobre tecnología, desarrollo y tendencias del sector.
         </p>
+        
+        {error && (
+          <div class="mt-4 text-yellow-600 bg-yellow-50 p-2 rounded">
+            {error}
+          </div>
+        )}
       </div>
       
       <!-- Filtro por categorías generado dinámicamente --> 
@@ -112,10 +142,10 @@ const categories = ['Todos', ...allCategories].sort((a, b) => a === 'Todos' ? -1
       
       <!-- Artículos de blog -->
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {allPosts.map(post => (
+        {blogPosts.map(post => (
           <article 
             class="bg-white rounded-2xl shadow-sm shadow-kodeksa-dark/5 overflow-hidden group flex flex-col h-full"
-            data-categories={post.categories.join(',')} 
+            data-categories={post.categories ? post.categories.join(',') : ''}
           >
             <div class="aspect-[16/10] overflow-hidden">
               <img 
@@ -126,9 +156,9 @@ const categories = ['Todos', ...allCategories].sort((a, b) => a === 'Todos' ? -1
             </div>
             <div class="p-6 flex flex-col flex-grow">
               <div class="flex justify-between items-start text-sm mb-4">
-                <span class="text-kodeksa-dark/60">{post.date}</span>
+                <span class="text-kodeksa-dark/60">{formatDate(post.createdAt)}</span>
                 <div class="flex flex-wrap gap-2 justify-end">
-                  {post.categories.map(category => (
+                  {post.categories && post.categories.map(category => (
                     <span class="px-3 py-1 bg-kodeksa-dark/5 rounded-full text-kodeksa-dark/70">{category}</span>
                   ))}
                 </div>
@@ -137,19 +167,21 @@ const categories = ['Todos', ...allCategories].sort((a, b) => a === 'Todos' ? -1
                 {post.title}
               </h3>
               <p class="text-kodeksa-dark/70 line-clamp-3 mb-4">
-                {post.excerpt}
+                {post.shortDescription}
               </p>
               <div class="mt-auto pt-4 flex justify-between items-center border-t border-kodeksa-dark/10">
                 <div class="flex items-center gap-2">
                   <img 
-                    src={post.author.avatar} 
-                    alt={post.author.name}
-                    class="w-8 h-8 rounded-full object-cover"
+                    src={post.author?.avatar ?? '/images/team/default-avatar.png'} 
+                    alt={post.author?.name ??'Autor Desconocido'}
+                    class="w-8 h-8 rounded-full object-contain"
                   />
-                  <span class="text-sm text-kodeksa-dark/70">{post.author.name}</span>
+                  <span class="text-sm text-kodeksa-dark/70">
+                    {post.author?.name ?? 'Autor Desconocido'}
+                  </span>
                 </div>
                 <a 
-                  href={`/blog/${post.id}`}
+                  href={`/blog/${post.slug}`}
                   class="text-kodeksa-primary font-medium flex items-center gap-1 hover:gap-2 transition-all"
                 >
                   Leer más
@@ -162,6 +194,36 @@ const categories = ['Todos', ...allCategories].sort((a, b) => a === 'Todos' ? -1
           </article>
         ))}
       </div>
+      
+      <!-- Paginación -->
+      {pagination.totalPages > 1 && (
+        <div class="flex justify-center gap-2 mt-12">
+          <a 
+            href={pagination.hasPreviousPage ? `/blog/all?page=${pagination.currentPage - 1}` : '#'} 
+            class={`px-4 py-2 rounded-lg ${pagination.hasPreviousPage ? 'bg-kodeksa-dark/5 hover:bg-kodeksa-primary hover:text-white' : 'bg-kodeksa-dark/5 opacity-50 cursor-not-allowed'} transition-colors`}
+            aria-disabled={!pagination.hasPreviousPage}
+          >
+            Anterior
+          </a>
+          
+          {Array.from({ length: pagination.totalPages }, (_, i) => (
+            <a 
+              href={`/blog/all?page=${i + 1}`} 
+              class={`px-4 py-2 rounded-lg transition-colors ${pagination.currentPage === i + 1 ? 'bg-kodeksa-primary text-white' : 'bg-kodeksa-dark/5 hover:bg-kodeksa-primary/20'}`}
+            >
+              {i + 1}
+            </a>
+          ))}
+          
+          <a 
+            href={pagination.hasNextPage ? `/blog/all?page=${pagination.currentPage + 1}` : '#'} 
+            class={`px-4 py-2 rounded-lg ${pagination.hasNextPage ? 'bg-kodeksa-dark/5 hover:bg-kodeksa-primary hover:text-white' : 'bg-kodeksa-dark/5 opacity-50 cursor-not-allowed'} transition-colors`}
+            aria-disabled={!pagination.hasNextPage}
+          >
+            Siguiente
+          </a>
+        </div>
+      )}
     </div>
   </main>
   
@@ -183,8 +245,8 @@ const categories = ['Todos', ...allCategories].sort((a, b) => a === 'Todos' ? -1
         button.setAttribute('data-active', 'true');
       
         // Filtrar artículos
-        articles.forEach(article => {
-          const articleCategories = article.getAttribute('data-categories').split(',');
+        articles.forEach((article:any) => {
+          const articleCategories = article.getAttribute('data-categories')?.split(',') || [];
           if (category === 'Todos' || articleCategories.includes(category)) {
             article.style.display = 'flex';
           } else {
@@ -193,5 +255,29 @@ const categories = ['Todos', ...allCategories].sort((a, b) => a === 'Todos' ? -1
         });
       });
     });
+    
+    // Manejar parámetros de URL para la paginación
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get('page');
+    
+    if (page) {
+      const pageLinks = document.querySelectorAll('a[href^="/blog/all?page="]');
+      pageLinks.forEach(link => {
+        if (link.getAttribute('href')?.includes(`page=${page}`)) {
+          link.classList.add('bg-kodeksa-primary', 'text-white');
+          link.classList.remove('bg-kodeksa-dark/5', 'hover:bg-kodeksa-primary/20');
+        }
+      });
+    }
   });
 </script>
+
+<style>
+  /* Clase para limitar el número de líneas en los extractos */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
