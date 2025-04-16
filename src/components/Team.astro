@@ -41,7 +41,12 @@ interface TeamMember {
   createdAt: string;
   updatedAt: string;
   cardConfiguration: CardConfiguration;
-  stack?: string[]; // Lista de tecnologías opcional
+  stack?: Skill[]; // Lista de tecnologías opcional
+}
+
+interface Skill{
+  skillName:string;
+  urlCertificate?: string
 }
 
 // Interface para la respuesta de la API
@@ -135,15 +140,17 @@ const textColors = ["#1A4D2E", "#D04848", "#264653", "#444444"];
               <div class="flex flex-wrap gap-2">
                 {member.stack && member.stack.map(tech => (
                   <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
-                    {tech}
+                    {tech.skillName}
                   </span>
                 ))}
               </div>
             </div>
           </a>
         )
-        :(<a class="group">
-            <TeamMemberCard
+        :(<div class="group">
+    {/* La tarjeta y el nombre del miembro dentro de un enlace */}
+    <a href={member.showCurriculum ? `/engineers/${member.slug}` : "#"} class={!member.showCurriculum ? "pointer-events-none" : ""}>
+      <TeamMemberCard
               image={member.image}
               altText={`${member.firstName} ${member.lastName}`}
               text_above={config.textAbove}
@@ -165,22 +172,35 @@ const textColors = ["#1A4D2E", "#D04848", "#264653", "#444444"];
               belowTextTransform={config.belowTextTransform || "uppercase"}
               aboveTextTopOffset={config.aboveTextTopOffset || "0"}
             />
-            <div class="space-y-4">
-              <div>
-                <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
-                  {member.firstName} {member.lastName}
-                </h3>
-                <p class="text-kodeksa-dark/70">{member.role}</p>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                {member.stack && member.stack.map(tech => (
-                  <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </a>);
+      
+      <div>
+        <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
+          {member.firstName} {member.lastName}
+        </h3>
+        <p class="text-kodeksa-dark/70">{member.role}</p>
+      </div>
+    </a>
+    
+    {/* Las habilidades FUERA del enlace, como elementos independientes */}
+    <div class="flex flex-wrap gap-2 mt-2">
+      {member.stack && member.stack.map(tech => (
+        tech.urlCertificate ? (
+          <a 
+            href={tech.urlCertificate} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 hover:bg-kodeksa-primary/10 hover:text-kodeksa-primary rounded-full text-sm transition-colors"
+          >
+            {tech.skillName}
+          </a>
+        ) : (
+          <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
+            {tech.skillName}
+          </span>
+        )
+      ))}
+    </div>
+  </div>);
       })}
     </div>
   </div>

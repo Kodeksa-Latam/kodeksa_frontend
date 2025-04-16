@@ -39,7 +39,12 @@ interface TeamMember {
   createdAt: string;
   updatedAt: string;
   cardConfiguration: CardConfiguration;
-  stack?: string[];
+  skills?: Skill[];
+}
+
+interface Skill{
+  skillName:string;
+  urlCertificate?: string
 }
 
 interface ApiResponse {
@@ -91,7 +96,7 @@ const fallbackTeam = [
       createdAt: "2025-04-09T20:44:39.560Z",
       updatedAt: "2025-04-09T20:44:39.560Z"
     },
-    stack: ['Flutter', 'Angular', 'Node.js', 'FastApi', 'Flask', 'Java']
+    skills: ['Flutter', 'Angular', 'Node.js', 'FastApi', 'Flask', 'Java']
   },
   {
     id: "dev-2",
@@ -128,7 +133,7 @@ const fallbackTeam = [
       createdAt: "2025-04-09T20:44:39.560Z",
       updatedAt: "2025-04-09T20:44:39.560Z"
     },
-    stack: ['Flutter', 'Angular', 'Node.js', 'FastApi', 'Flask', 'Java']
+    skills: ['Flutter', 'Angular', 'Node.js', 'FastApi', 'Flask', 'Java']
   }
   // Puedes agregar más miembros de respaldo aquí...
 ];
@@ -151,7 +156,7 @@ export const GET: APIRoute = async () => {
     // Aseguramos que todos los miembros tengan un stack (aunque esté vacío)
     team = team.map(member => ({
       ...member,
-      stack: member.stack || []
+      stack: member.skills || []
     }));
     
     return new Response(JSON.stringify(team), {
