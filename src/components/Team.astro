@@ -1,5 +1,5 @@
 ---
-import TeamMemberCard from './TeamMemberCard.astro';
+import TeamMemberCard from "./TeamMemberCard.astro";
 
 // Interface para la configuración de la tarjeta
 interface CardConfiguration {
@@ -44,9 +44,9 @@ interface TeamMember {
   stack?: Skill[]; // Lista de tecnologías opcional
 }
 
-interface Skill{
-  skillName:string;
-  urlCertificate?: string
+interface Skill {
+  skillName: string;
+  urlCertificate?: string;
 }
 
 // Interface para la respuesta de la API
@@ -64,20 +64,34 @@ interface ApiResponse {
 
 // Obtener los miembros del equipo directamente desde nuestro endpoint
 let team: TeamMember[] = [];
+let pagination = {
+  currentPage: 1,
+  totalPages: 1,
+  hasNextPage: false,
+  hasPreviousPage: false,
+};
 let error: string | null = null;
 
 try {
   // Llamamos a nuestro propio endpoint interno
-  const response = await fetch(new URL('/api/team.json', Astro.url));
-  
+  const response = await fetch(new URL("/api/team.json", Astro.url));
+
   if (response.ok) {
-    team = await response.json();
+    const data = await response.json();
+    team = data.items;
+    pagination = data.meta || {
+      currentPage: 1,
+      totalPages: 1,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    };
   } else {
-    throw new Error('Error al obtener los miembros del equipo');
+    throw new Error("Error al obtener los miembros del equipo");
   }
 } catch (err) {
-  console.error('Error al obtener los miembros del equipo:', err);
-  error = 'No se pudieron cargar los miembros del equipo. Usando datos de respaldo.';
+  console.error("Error al obtener los miembros del equipo:", err);
+  error =
+    "No se pudieron cargar los miembros del equipo. Usando datos de respaldo.";
 }
 
 // Colores de respaldo para miembros sin configuración completa
@@ -88,120 +102,175 @@ const textColors = ["#1A4D2E", "#D04848", "#264653", "#444444"];
 <section id="profesionales" class="py-32 bg-kodeksa-dark/[0.02]">
   <div class="container mx-auto px-6">
     <div class="max-w-2xl mx-auto text-center mb-16">
-      <h2 class="text-4xl font-display font-bold text-kodeksa-dark mb-6">Nuestro Equipo</h2>
+      <h2 class="text-4xl font-display font-bold text-kodeksa-dark mb-6">
+        Nuestro Equipo
+      </h2>
       <p class="text-kodeksa-dark/70 text-lg">
-        Conocé a los profesionales que hacen posible transformar ideas en realidad.
+        Conocé a los profesionales que hacen posible transformar ideas en
+        realidad.
       </p>
-      
-      {error && (
-        <div class="mt-4 text-yellow-600 bg-yellow-50 p-2 rounded">
-          {error}
-        </div>
-      )}
+
+      {
+        error && (
+          <div class="mt-4 text-yellow-600 bg-yellow-50 p-2 rounded">
+            {error}
+          </div>
+        )
+      }
     </div>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-      {team.map((member, index) => {
-        const config = member.cardConfiguration;
-        
-        return (member.showCurriculum)
-        ?
-        (
-          <a href={`/engineers/${member.slug}`} class="group">
-            <TeamMemberCard
-              image={member.image}
-              altText={`${member.firstName} ${member.lastName}`}
-              text_above={config.textAbove}
-              text_below={config.textBelow}
-              bgColor={config.bgColor || bgColors[index % bgColors.length]}
-              textAboveColor={config.textAboveColor || textColors[index % textColors.length]}
-              textBelowColor={config.textBelowColor || textColors[index % textColors.length]}
-              imageSize={config.imageSize || 90}
-              imageLeftOffset={config.imageLeftOffset || "0"}
-              aboveFontFamily={config.aboveFontFamily || "'Clash Display', sans-serif"}
-              belowFontFamily={config.belowFontFamily || "'JetBrains Mono', sans-serif"}
-              aboveFontSize={config.aboveFontSize || "3.5rem"}
-              belowFontSize={config.belowFontSize || "1.5rem"}
-              aboveFontWeight={config.aboveFontWeight || "700"}
-              belowFontWeight={config.belowFontWeight || "700"}
-              aboveLetterSpacing={config.aboveLetterSpacing || "0.23em"}
-              belowLetterSpacing={config.belowLetterSpacing || "0.35em"}
-              aboveTextTransform={config.aboveTextTransform || "uppercase"}
-              belowTextTransform={config.belowTextTransform || "uppercase"}
-              aboveTextTopOffset={config.aboveTextTopOffset || "0"}
-            />
-            <div class="space-y-4">
-              <div>
-                <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
-                  {member.firstName} {member.lastName}
-                </h3>
-                <p class="text-kodeksa-dark/70">{member.role}</p>
+      {
+        team.map((member, index) => {
+          const config = member.cardConfiguration;
+
+          return member.showCurriculum ? (
+            <a href={`/engineers/${member.slug}`} class="group">
+              <TeamMemberCard
+                image={member.image}
+                altText={`${member.firstName} ${member.lastName}`}
+                text_above={config.textAbove}
+                text_below={config.textBelow}
+                bgColor={config.bgColor || bgColors[index % bgColors.length]}
+                textAboveColor={
+                  config.textAboveColor || textColors[index % textColors.length]
+                }
+                textBelowColor={
+                  config.textBelowColor || textColors[index % textColors.length]
+                }
+                imageSize={config.imageSize || 90}
+                imageLeftOffset={config.imageLeftOffset || "0"}
+                aboveFontFamily={
+                  config.aboveFontFamily || "'Clash Display', sans-serif"
+                }
+                belowFontFamily={
+                  config.belowFontFamily || "'JetBrains Mono', sans-serif"
+                }
+                aboveFontSize={config.aboveFontSize || "3.5rem"}
+                belowFontSize={config.belowFontSize || "1.5rem"}
+                aboveFontWeight={config.aboveFontWeight || "700"}
+                belowFontWeight={config.belowFontWeight || "700"}
+                aboveLetterSpacing={config.aboveLetterSpacing || "0.23em"}
+                belowLetterSpacing={config.belowLetterSpacing || "0.35em"}
+                aboveTextTransform={config.aboveTextTransform || "uppercase"}
+                belowTextTransform={config.belowTextTransform || "uppercase"}
+                aboveTextTopOffset={config.aboveTextTopOffset || "0"}
+              />
+              <div class="space-y-4">
+                <div>
+                  <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
+                    {member.firstName} {member.lastName}
+                  </h3>
+                  <p class="text-kodeksa-dark/70">{member.role}</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  {member.stack &&
+                    member.stack.map((tech) => (
+                      <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
+                        {tech.skillName}
+                      </span>
+                    ))}
+                </div>
               </div>
-              <div class="flex flex-wrap gap-2">
-                {member.stack && member.stack.map(tech => (
-                  <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
-                    {tech.skillName}
-                  </span>
-                ))}
+            </a>
+          ) : (
+            <div class="group">
+              {/* La tarjeta y el nombre del miembro dentro de un enlace */}
+              <a
+                href={member.showCurriculum ? `/engineers/${member.slug}` : "#"}
+                class={!member.showCurriculum ? "pointer-events-none" : ""}
+              >
+                <TeamMemberCard
+                  image={member.image}
+                  altText={`${member.firstName} ${member.lastName}`}
+                  text_above={config.textAbove}
+                  text_below={config.textBelow}
+                  bgColor={config.bgColor || bgColors[index % bgColors.length]}
+                  textAboveColor={
+                    config.textAboveColor ||
+                    textColors[index % textColors.length]
+                  }
+                  textBelowColor={
+                    config.textBelowColor ||
+                    textColors[index % textColors.length]
+                  }
+                  imageSize={config.imageSize || 90}
+                  imageLeftOffset={config.imageLeftOffset || "0"}
+                  aboveFontFamily={
+                    config.aboveFontFamily || "'Clash Display', sans-serif"
+                  }
+                  belowFontFamily={
+                    config.belowFontFamily || "'JetBrains Mono', sans-serif"
+                  }
+                  aboveFontSize={config.aboveFontSize || "3.5rem"}
+                  belowFontSize={config.belowFontSize || "1.5rem"}
+                  aboveFontWeight={config.aboveFontWeight || "700"}
+                  belowFontWeight={config.belowFontWeight || "700"}
+                  aboveLetterSpacing={config.aboveLetterSpacing || "0.23em"}
+                  belowLetterSpacing={config.belowLetterSpacing || "0.35em"}
+                  aboveTextTransform={config.aboveTextTransform || "uppercase"}
+                  belowTextTransform={config.belowTextTransform || "uppercase"}
+                  aboveTextTopOffset={config.aboveTextTopOffset || "0"}
+                />
+
+                <div>
+                  <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
+                    {member.firstName} {member.lastName}
+                  </h3>
+                  <p class="text-kodeksa-dark/70">{member.role}</p>
+                </div>
+              </a>
+
+              {/* Las habilidades FUERA del enlace, como elementos independientes */}
+              <div class="flex flex-wrap gap-2 mt-2">
+                {member.stack &&
+                  member.stack.map((tech) =>
+                    tech.urlCertificate ? (
+                      <a
+                        href={tech.urlCertificate}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 hover:bg-kodeksa-primary/10 hover:text-kodeksa-primary rounded-full text-sm transition-colors"
+                      >
+                        {tech.skillName}
+                      </a>
+                    ) : (
+                      <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
+                        {tech.skillName}
+                      </span>
+                    ),
+                  )}
               </div>
             </div>
-          </a>
-        )
-        :(<div class="group">
-    {/* La tarjeta y el nombre del miembro dentro de un enlace */}
-    <a href={member.showCurriculum ? `/engineers/${member.slug}` : "#"} class={!member.showCurriculum ? "pointer-events-none" : ""}>
-      <TeamMemberCard
-              image={member.image}
-              altText={`${member.firstName} ${member.lastName}`}
-              text_above={config.textAbove}
-              text_below={config.textBelow}
-              bgColor={config.bgColor || bgColors[index % bgColors.length]}
-              textAboveColor={config.textAboveColor || textColors[index % textColors.length]}
-              textBelowColor={config.textBelowColor || textColors[index % textColors.length]}
-              imageSize={config.imageSize || 90}
-              imageLeftOffset={config.imageLeftOffset || "0"}
-              aboveFontFamily={config.aboveFontFamily || "'Clash Display', sans-serif"}
-              belowFontFamily={config.belowFontFamily || "'JetBrains Mono', sans-serif"}
-              aboveFontSize={config.aboveFontSize || "3.5rem"}
-              belowFontSize={config.belowFontSize || "1.5rem"}
-              aboveFontWeight={config.aboveFontWeight || "700"}
-              belowFontWeight={config.belowFontWeight || "700"}
-              aboveLetterSpacing={config.aboveLetterSpacing || "0.23em"}
-              belowLetterSpacing={config.belowLetterSpacing || "0.35em"}
-              aboveTextTransform={config.aboveTextTransform || "uppercase"}
-              belowTextTransform={config.belowTextTransform || "uppercase"}
-              aboveTextTopOffset={config.aboveTextTopOffset || "0"}
-            />
-      
-      <div>
-        <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
-          {member.firstName} {member.lastName}
-        </h3>
-        <p class="text-kodeksa-dark/70">{member.role}</p>
-      </div>
-    </a>
-    
-    {/* Las habilidades FUERA del enlace, como elementos independientes */}
-    <div class="flex flex-wrap gap-2 mt-2">
-      {member.stack && member.stack.map(tech => (
-        tech.urlCertificate ? (
-          <a 
-            href={tech.urlCertificate} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 hover:bg-kodeksa-primary/10 hover:text-kodeksa-primary rounded-full text-sm transition-colors"
+          );
+        })
+      }
+    </div>
+
+    {/* Botón "Ver todos" cuando hay más páginas disponibles */}
+    {
+      pagination.hasNextPage || pagination.totalPages > 1 ? (
+        <div class="mt-12 text-center">
+          <a
+            href="/engineers/all"
+            class="inline-flex items-center px-6 py-3 border-2 border-kodeksa-dark/10 rounded-full hover:border-kodeksa-primary/20 text-kodeksa-dark font-medium transition-colors"
           >
-            {tech.skillName}
+            Ver todos los profesionales
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 ml-2"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
           </a>
-        ) : (
-          <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
-            {tech.skillName}
-          </span>
-        )
-      ))}
-    </div>
-  </div>);
-      })}
-    </div>
+        </div>
+      ) : null
+    }
   </div>
 </section>

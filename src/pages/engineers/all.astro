@@ -1,0 +1,301 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import TeamMemberCard from '../../components/TeamMemberCard.astro';
+
+// Interfaces
+interface CardConfiguration {
+  id: string;
+  userId: string;
+  imageSize: number;
+  imageLeftOffset?: string;
+  bgColor: string;
+  textAbove: string;
+  textAboveColor: string;
+  aboveFontFamily: string;
+  aboveFontSize: string;
+  aboveFontWeight: string;
+  aboveLetterSpacing: string;
+  aboveTextTransform: string;
+  aboveTextTopOffset: string;
+  textBelow: string;
+  belowFontWeight: string;
+  belowLetterSpacing: string;
+  belowFontFamily: string;
+  belowFontSize: string;
+  belowTextTransform: string;
+  textBelowColor: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Skill {
+  id: string;
+  userId: string;
+  skillName: string;
+  urlCertificate?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Engineer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isActive: boolean;
+  role: string;
+  slug: string;
+  image: string;
+  showCurriculum: boolean;
+  createdAt: string;
+  updatedAt: string;
+  cardConfiguration: CardConfiguration;
+  skills?: Skill[];
+}
+
+interface ApiResponse {
+  items: Engineer[];
+  meta: {
+    currentPage: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+// Colores de respaldo para miembros sin configuración completa
+const bgColors = ["#E8F4F2", "#FFF8E6", "#F0F0F0", "#E6F1FF"];
+const textColors = ["#1A4D2E", "#D04848", "#264653", "#444444"];
+
+// Obtener todos los ingenieros
+let engineers: Engineer[] = [];
+let categories: string[] = ['Todos'];
+let pagination = {
+  currentPage: 1,
+  totalPages: 1,
+  hasNextPage: false,
+  hasPreviousPage: false
+};
+let error: string | null = null;
+
+try {
+  // Parámetros de URL para paginación
+  const urlParams = new URL(Astro.request.url).searchParams;
+  const page = urlParams.get('page') || '1';
+  const limit = '12'; // Mostrar 12 ingenieros por página
+  
+  // Llamamos a nuestro endpoint
+  const response = await fetch(new URL(`/api/engineers.json?page=${page}&limit=${limit}`, Astro.url));
+  
+  if (response.ok) {
+    const data: ApiResponse = await response.json();
+    engineers = data.items;
+    
+    pagination = {
+      currentPage: data.meta.currentPage,
+      totalPages: data.meta.totalPages,
+      hasNextPage: data.meta.hasNextPage,
+      hasPreviousPage: data.meta.hasPreviousPage
+    };
+    
+    // Extraer todas las habilidades únicas para filtrar
+    const allSkills = new Set<string>();
+    
+    engineers.forEach(engineer => {
+      if (engineer.skills && engineer.skills.length > 0) {
+        engineer.skills.forEach(skill => {
+          allSkills.add(skill.skillName);
+        });
+      }
+    });
+    
+    // Agregar todas las habilidades únicas al array de categorías
+    categories = ['Todos', ...Array.from(allSkills).sort()];
+    
+  } else {
+    throw new Error('Error al obtener los ingenieros');
+  }
+} catch (err) {
+  console.error('Error al obtener los ingenieros:', err);
+  error = 'No se pudieron cargar los ingenieros.';
+}
+---
+
+<Layout title="Nuestro Equipo - Kodeksa" description="Conoce a los profesionales que hacen posible transformar ideas en realidad.">
+  <Navbar />
+  
+  <main class="pt-32 pb-20">
+    <div class="container mx-auto px-6">
+      <div class="max-w-3xl mx-auto text-center mb-16">
+        <h1 class="text-5xl font-display font-bold text-kodeksa-dark mb-6">Nuestro Equipo</h1>
+        <p class="text-kodeksa-dark/70 text-xl">
+          Conoce a los profesionales que hacen posible transformar ideas en realidad.
+        </p>
+        
+        {error && (
+          <div class="mt-4 text-yellow-600 bg-yellow-50 p-2 rounded">
+            {error}
+          </div>
+        )}
+      </div>
+      
+      <!-- Filtro por habilidades generado dinámicamente --> 
+      <div class="flex justify-center flex-wrap gap-4 mb-12 pb-4">
+        {categories.map(category => (
+          <button
+            class="px-6 py-2 rounded-full text-kodeksa-dark/70 hover:text-kodeksa-primary transition-colors font-medium data-[active=true]:bg-kodeksa-primary data-[active=true]:text-white"
+            data-category={category}
+            data-active={category === 'Todos'}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+      
+      <!-- Grid de ingenieros -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {engineers.map((engineer, index) => {
+          const config = engineer.cardConfiguration;
+          
+          return (
+            <div 
+              class="group"
+              data-skills={engineer.skills ? engineer.skills.map(skill => skill.skillName).join(',') : ''}
+            >
+              <a href={engineer.showCurriculum ? `/engineers/${engineer.slug}` : "#"} class={!engineer.showCurriculum ? "pointer-events-none" : ""}>
+                <TeamMemberCard
+                  image={engineer.image}
+                  altText={`${engineer.firstName} ${engineer.lastName}`}
+                  text_above={config.textAbove}
+                  text_below={config.textBelow}
+                  bgColor={config.bgColor || bgColors[index % bgColors.length]}
+                  textAboveColor={config.textAboveColor || textColors[index % textColors.length]}
+                  textBelowColor={config.textBelowColor || textColors[index % textColors.length]}
+                  imageSize={config.imageSize || 90}
+                  imageLeftOffset={config.imageLeftOffset || "0"}
+                  aboveFontFamily={config.aboveFontFamily || "'Clash Display', sans-serif"}
+                  belowFontFamily={config.belowFontFamily || "'JetBrains Mono', sans-serif"}
+                  aboveFontSize={config.aboveFontSize || "3.5rem"}
+                  belowFontSize={config.belowFontSize || "1.5rem"}
+                  aboveFontWeight={config.aboveFontWeight || "700"}
+                  belowFontWeight={config.belowFontWeight || "700"}
+                  aboveLetterSpacing={config.aboveLetterSpacing || "0.23em"}
+                  belowLetterSpacing={config.belowLetterSpacing || "0.35em"}
+                  aboveTextTransform={config.aboveTextTransform || "uppercase"}
+                  belowTextTransform={config.belowTextTransform || "uppercase"}
+                  aboveTextTopOffset={config.aboveTextTopOffset || "0"}
+                />
+                
+                <div class="space-y-4 mt-4">
+                  <div>
+                    <h3 class="text-xl font-bold text-kodeksa-dark group-hover:text-kodeksa-primary transition-colors">
+                      {engineer.firstName} {engineer.lastName}
+                    </h3>
+                    <p class="text-kodeksa-dark/70">{engineer.role}</p>
+                  </div>
+                  
+                  <div class="flex flex-wrap gap-2">
+                    {engineer.skills && engineer.skills.map(skill => (
+                      skill.urlCertificate ? (
+                        <a 
+                          href={skill.urlCertificate} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 hover:bg-kodeksa-primary/10 hover:text-kodeksa-primary rounded-full text-sm transition-colors"
+                        >
+                          {skill.skillName}
+                        </a>
+                      ) : (
+                        <span class="px-3 py-1 bg-kodeksa-dark/5 text-kodeksa-dark/70 rounded-full text-sm">
+                          {skill.skillName}
+                        </span>
+                      )
+                    ))}
+                  </div>
+                </div>
+              </a>
+            </div>
+          );
+        })}
+      </div>
+      
+      <!-- Paginación -->
+      {pagination.totalPages > 1 && (
+        <div class="flex justify-center gap-2 mt-12">
+          <a 
+            href={pagination.hasPreviousPage ? `/engineers/all?page=${pagination.currentPage - 1}` : '#'} 
+            class={`px-4 py-2 rounded-lg ${pagination.hasPreviousPage ? 'bg-kodeksa-dark/5 hover:bg-kodeksa-primary hover:text-white' : 'bg-kodeksa-dark/5 opacity-50 cursor-not-allowed'} transition-colors`}
+            aria-disabled={!pagination.hasPreviousPage}
+          >
+            Anterior
+          </a>
+          
+          {Array.from({ length: pagination.totalPages }, (_, i) => (
+            <a 
+              href={`/engineers/all?page=${i + 1}`} 
+              class={`px-4 py-2 rounded-lg transition-colors ${pagination.currentPage === i + 1 ? 'bg-kodeksa-primary text-white' : 'bg-kodeksa-dark/5 hover:bg-kodeksa-primary/20'}`}
+            >
+              {i + 1}
+            </a>
+          ))}
+          
+          <a 
+            href={pagination.hasNextPage ? `/engineers/all?page=${pagination.currentPage + 1}` : '#'} 
+            class={`px-4 py-2 rounded-lg ${pagination.hasNextPage ? 'bg-kodeksa-dark/5 hover:bg-kodeksa-primary hover:text-white' : 'bg-kodeksa-dark/5 opacity-50 cursor-not-allowed'} transition-colors`}
+            aria-disabled={!pagination.hasNextPage}
+          >
+            Siguiente
+          </a>
+        </div>
+      )}
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>
+
+<script>
+  // Filtrado por habilidades
+  document.addEventListener('DOMContentLoaded', () => {
+    const categoryButtons = document.querySelectorAll('[data-category]');
+    const engineers = document.querySelectorAll('div[data-skills]');
+  
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const category = button.getAttribute('data-category');
+      
+        // Actualizar botones activos
+        categoryButtons.forEach(btn => btn.setAttribute('data-active', 'false'));
+        button.setAttribute('data-active', 'true');
+      
+        // Filtrar ingenieros
+        engineers.forEach((engineer:Element) => {
+          const skillsList = engineer.getAttribute('data-skills')?.split(',') || [];
+          if (category === 'Todos' || skillsList.includes(category!)) {
+            engineer.classList.remove('hidden');
+          } else {
+            engineer.classList.add('hidden');
+          }
+        });
+      });
+    });
+    
+    // Manejar parámetros de URL para la paginación
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get('page');
+    
+    if (page) {
+      const pageLinks = document.querySelectorAll('a[href^="/engineers/all?page="]');
+      pageLinks.forEach(link => {
+        if (link.getAttribute('href')?.includes(`page=${page}`)) {
+          link.classList.add('bg-kodeksa-primary', 'text-white');
+          link.classList.remove('bg-kodeksa-dark/5', 'hover:bg-kodeksa-primary/20');
+        }
+      });
+    }
+  });
+</script>
